@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.microsoft.azure:applicationinsights-spring-boot-starter:1.0.1-BETA">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/applicationinsights-spring-boot-starter/1.0.1-BETA/applicationinsights-spring-boot-starter-1.0.1-BETA.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/applicationinsights-spring-boot-starter/1.0.1-BETA/applicationinsights-spring-boot-starter-1.0.1-BETA-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/applicationinsights-spring-boot-starter/1.0.1-BETA/applicationinsights-spring-boot-starter-1.0.1-BETA-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
