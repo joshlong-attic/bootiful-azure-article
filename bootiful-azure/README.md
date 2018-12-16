@@ -153,7 +153,6 @@ But I concede the point. What can Azure do for you? You don't need to look much 
 
 Per [the product web page](https://azure.microsoft.com/en-us/services/cosmos-db/): CosmosDB was bult from the ground up iwth global didstibution and h9orizontal scale at its core. guarantees single-digit-millisecond read and write latencies at the 99th percentile, and guarantees 99.999 high availability with multi-homing anywhere in the world—all backed by industry-leading, comprehensive service level agreements (SLAs).
 
-
 ## Items and Containers 
 
 Internally, CosmosDB stores "items" in "containers." But you don't necessarily deal with items or containers as the concepts will surfaced in the language oft he data model you're using to consume the data. If you're using it as a document store, like MongoDB, then items would be mapped to documents in collections, for example.
@@ -188,6 +187,18 @@ CosmosDB also embeds a JavaScript engine so you can use JavaScript to define tri
 ## Introducing CosmosDB into your Spring Application 
 
 Alrighty - with all that established let's look at its use in a Spring application. You _could_, in theory, talk to it through the appropriate abstractions for the aforementioned technologies like MongoDB and Cassandra, but I prefer to use the Spring Data CosmosDB abstraction. CosmosDB was historically called Microosft DocumentDB. So, for historical reasons, we need to use the Maven dependency that references that old project name. Add the relevant starter dependency, `com.microsoft.azure`:`azure-documentdb-spring-boot-starter`, to your build file. 
+
+
+Then we'll have to configure the relevant connection in our properties files.
+
+
+```java
+azure.documentdb.database=DB_NAME
+azure.documentdb.uri=https://URI.documents.azure.com:443/
+azure.documentdb.key=KEY
+```
+
+Replace the property values with the relevant and appropriate string values.
 
 Now we must define an object class to map it to our record. This will be an entity. We'll use the Spring Data DocumentDB mapping annotations.
 
@@ -268,8 +279,120 @@ class CosmosDbDemo {
 
 Azure Service Bus is a cloud messaging as a service and integration technology. It is, just like CosmosDB, as flexible as possible. It [supports the AMQP 1.0 protocol](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), like RabbitMQ. AMQP is a flexible wire protocol. The protocol itself includes instructions for administering the broker, beyond just interacting with it. AMQP brokers are ideal for integration because they are language- and platform-agnostic.  In an AMQP broker producers send messages to _exchanges_ which then route the messages to _queues_, from which consumers then read the messages. The exchange is responsible for deciding to which queue the message should be sent. It does this in any of a number of ways but it usually involves looking at a key in the message headers called the _routing key_. 
 
-This indirection between the exhcange and the queues makes AMQP a bit more flexible than JMS-based brokers where producers  send messages to `Destination` objects  that consumers then read from. That said, [you can also use Azure Service Bus through the JMS API](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), if you want, as well. 
+This indirection between the exhcange and the queues makes AMQP a bit more flexible than JMS-based brokers where producers  send messages  directly to `Destination` objects  that consumers then read from. This means that producers and consumers are coupled by their  choice of `Destination`. Additionally,  JMS is an API for the JVM, it is  not a wire protocol. As  such, producers and consumers are dependent on the version  of  the library they're using being correct. That said, [you can also use Azure Service Bus through the JMS API](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), if you want, as well. 
 
 Like I said, Azure Service Bus is nothing if not flexible! 
 
-The AMQP  model is illustrative because, basically, the native model for Azure Service Bus looks like AMQP. In Azure Service Bus you have topics or queues to which you send messages. Messages are then connected to subscriptions, from which consumers read. Let's build a simple example that sends and then consumes messages.
+The AMQP model is illustrative because, basically, the native model for Azure Service Bus looks like AMQP. In Azure Service Bus you have topics or queues to which you send messages. Messages are then connected to subscriptions, from which consumers read. Let's build a simple example that sends and then consumes messages. We won't use AMQP or JMS, just the regular Microsoft Azure ServiceBus API. 
+
+
+## Configuring Azure Service Bus on Microsoft Azure 
+
+... 
+
+## Introducing Azure Service Bus into your Spring Application 
+
+Add the following dependency to your build: `com.microsoft.azure` : `azure-servicebus-spring-boot-starter`.
+
+We'll write two components: one a producer and the other a consumer. Naturally, in  a real application these things would naturally live in separate applications and separate processes since messaging serves to support the integration of applications. We'll look at the consumer first.  The consumer needs to register a subscriber _before_ something else has produced the message, so we'll make these beans _ordered_ - the Spring container will order their initialization one before the other based on the `Ordered` value we give it. 
+
+```java
+package com.example.bootifulazure;
+
+import com.microsoft.azure.servicebus.ExceptionPhase;
+import com.microsoft.azure.servicebus.IMessage;
+import com.microsoft.azure.servicebus.IMessageHandler;
+import com.microsoft.azure.servicebus.ISubscriptionClient;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+
+
+@Log4j2
+@Component
+class ServiceBusConsumer implements Ordered {
+
+    private final ISubscriptionClient iSubscriptionClient;
+
+    ServiceBusConsumer(ISubscriptionClient isc) {
+        this.iSubscriptionClient = isc;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void consume() throws Exception {
+
+        this.iSubscriptionClient.registerMessageHandler(new IMessageHandler() {
+
+            @Override
+            public CompletableFuture<Void> onMessageAsync(IMessage message) {
+                log.info("received message " + new String(message.getBody()) + " with body ID " + message.getMessageId());
+                return CompletableFuture.completedFuture(null);
+            }
+
+            @Override
+            public void notifyException(Throwable exception, ExceptionPhase phase) {
+                log.error("eeks!", exception);
+            }
+        });
+
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+}
+```
+
+When a message arrives, we log its `body` and `messageId` . 
+
+Now, let's look at  the producer. 
+
+```java
+package com.example.bootifulazure;
+
+import com.microsoft.azure.servicebus.ITopicClient;
+import com.microsoft.azure.servicebus.Message;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+
+@Log4j2
+@Component
+class ServiceBusProducer implements Ordered {
+
+    private final ITopicClient iTopicClient;
+
+    ServiceBusProducer(ITopicClient iTopicClient) {
+        this.iTopicClient = iTopicClient;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void produce() throws Exception {
+        this.iTopicClient.send(new Message("Hello @ " + Instant.now().toString()));
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
