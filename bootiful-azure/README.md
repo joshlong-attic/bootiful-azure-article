@@ -479,9 +479,12 @@ Active Directory is a directoy server. It provides a tree of users, organization
 
 ## Application Insights 
 
-As you scale out and spin up more microservices you'll introduce more and more moving parts and it becomes all the more critical to be able to observe the movement of data from one node to another in the system.  Here, the Microsoft Application Insights integration for Spring applications - which is for the moment at least delivered separate from the main Spring integration for Microsoft Azure - makes using it an cinch! 
+As you scale out and spin up more microservices you'll introduce more and more moving parts and it becomes all the more critical to be able to observe the movement of data from one node to another in the system.  Here, the Microsoft Application Insights integration for Spring applications - which is for the moment at least delivered separate from the main Spring integration for Microsoft Azure - makes using it an cinch! Add `com.microsoft.azure`: `applicationinsights-spring-boot-starter` : `1.1.0-BETA`  to your build file. 
 
+You'll then need to specify an `azure.application-insights.instrumentation-key` and to give your application a  `spring.application.name` name. Which, to be fair, you should do anyway. That's it! Restart your application, drive some traffic through an HTTP endpoint and then login to the Microsoft Application Insights dashboard and watch the instrumentation in action! 
 
+// TODO obtaining the key 
+// TODO screenshot of APp Insights
 
 ## Cloud Foundry 
 
