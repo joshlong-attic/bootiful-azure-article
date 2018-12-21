@@ -31,7 +31,6 @@ class ObjectStorageServiceDemo {
 		this.files = this.cloudStorageAccount
 			.createCloudBlobClient()
 			.getContainerReference("files");
-
 	}
 
 	@EventListener(ApplicationReadyEvent.class)

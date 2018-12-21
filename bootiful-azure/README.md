@@ -1,12 +1,13 @@
 # Bootiful Azure 
 
 * Bootiful Azure: Taking Your First Steps with Microsoft Azure 
-* SQL-based data access with Microsoft SQL Server (bonus! it supports reactive programming)
+* Bootiful Azure: SQL-based data access with Microsoft SQL Server (bonus! it supports reactive programming)
 * Bootiful Azure: Global Data Access with CosmosDB 
-* Azure Service Bus 
-* Object Storage Service 
-* Azure Application Insights
-* Using the Azure Services in a Cloud Foundry Environment 
+* Bootiful Azure: Azure Service Bus 
+* Bootiful Azure: Object Storage Service 
+* Bootiful Azure: To Production
+** Azure Application Insights
+** Using the Azure Services in a Cloud Foundry Environment 
 
 :sma: Spring for Microsoft Azure 
 :msa: Microsoft Azure 
@@ -66,6 +67,8 @@ In my case, the Maven property `azure.version`, was set to `2.0.5`.
 ## The Cloud Foundry Service Broker
 
 There's [a Cloud Foundry service broker](https://pivotal.io/platform/services-marketplace/data-management/microsoft-azure) that you can use to quickly spin up various Microsoft Azure services and then bind them to your application. This service broker makes running applications on Cloud Foundry, especially on top of Microsoft Azure, the easiest path to production for applications targeting Microsoft Azure services.
+
+There ya have it! You know everything you need to know to setup a Spring application to leverage services on Microsoft Azure.
 
 # Bootiful Azure: SQL-based data access with Microsoft SQL Server  
 
@@ -387,12 +390,98 @@ class ServiceBusProducer implements Ordered {
 }
 ```
 
+Pretty straightforward right? We send a messasge, and we get a message. If you've ever done any work with messaging technoogies you might find the lack of mention of any sort of _destination_ - the topic or queue name - a bit puzzling. Remember that this all lives in the properties (such as those in your `application.properties` file) and is used when auto-configuring the `ITopicClient` and `ISubscriptionClient`. If you want to send messages or consume messages from multiple destinations, simply define the relevant beans yourself and make sure to _not_ specify `azure.service-bus.connection-string` in your application's properties, otherwise the default Spring Boot autoconfiguration will kick in and try to create these beans for you. 
+
+# Bootiful Azure: Object Storage Service 
+
+Now let's turn to something a bit more... mundane. Something that you, ideally, won't even think about all that often. Applications often have storage requirements: they may need to store uploaded user content (binary data like pictures or documents), generated artifacts like PDF fils, videos, music, etc. They might want to store logs. It's not hard to think of things an application might want to durably store.  
+
+These applications could use a filesystem, such as that on the local machine or a network attached filesystem like [NFS (network file system)](https://en.wikipedia.org/wiki/Network_File_System). I'll use NFS to generically refer to any network attached file system like Samba, NFS itself, or legacy options like DAC, FAL, etc. NFS options provide a filesystem-like interface to files, often in a hierarchical format. I say "like" because not all filesystems are the same. Some support more nuanced permissions models than others. Some support encheoding and replication of metatadata attached to files and directories in the tree. Support support different speed guarantees for different operations; some filesystems might optimize for reads versus writes. Some might optimize for directory traversals. The client's perspective of a file read or write is different depending on the client used. Is a write consistent on all replication nodes immediately? Finally, what if the client doesn't speak POSIX? What if it can only speak HTTP? Or if it wants to speak Bittorrent for more efficient consolidation of downloads through peer-to-peer networks? 
+
+For these reasons, and more, Amazon Web Services introduced S3, the Simple Cloud Storage Service (get it? "S" times 3? "S3"?) which has since been something of a prevailing standard that all other cloud vendors need to support. For Microsoft Azure, the Object Storage Service (OSS) is the thing that provides an S3-like experience. You can use its API directly, as we will here, but it's [also possible to use the S3Proxy to proxy writes to OSS](https://www.microsoft.com/developerblog/2016/05/22/access-azure-blob-storage-from-your-apps-using-s3-api/) using an AWS S3 client, of which there are countless! Microsoft Azure isn't playing catchup though. Furthest thing from it! They even offer a standalone browser called the Microsoft Azure Storage Explorer which runs, yep, on Linux, Macintosh and Windows. That standalone browser lets you interrogate OSS stores _as well as_ CosmosDB data. How's that for convenient? You can of course using the `az` CLI or the API itself. We're going to use the Java API and abstraction in terms of Spring. 
+
+
+## Configuring Azure Object Storage Service
+
+* you need to create a bucket and upload a file called `cat.jpg` 
+* you need to get the configuration values for `application.properties` 
+
+## Introducing Azure Object Storage Service into your Spring Application  
+
+Add `com.microsoft.azure`: `azure-storage-spring-boot-starter` to your application's build file. Make sure you've specified the OSS connection string for the `azure.storage.connection-string` property. 
+
+We're going to read the bytes for an image of a cat in our application's `src/main/resources` directory and then write those bytes to the Object Storage Service as a "block blog". There are other interfaces through which you can talk to OSS, but for our purposes it's very natural to think about it as an ensemble of "containers" (logical groupings of things, almost like a directory)  and "blobs." A blob is a file, basically, with a name and metadata associated with it. So, all that the following example does is store the bytes for a cat into a container in Microsoft Azure called `files` under a random name prefixed with `cat-` and suffixed with `.jpg`. That's it! 
+
+```java
+package com.example.bootifulazure;
+
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.UUID;
+
+@Log4j2
+@Component
+class ObjectStorageServiceDemo {
+
+    private final CloudStorageAccount cloudStorageAccount;
+    private final Resource resource;
+    private final CloudBlobContainer files;
+
+    ObjectStorageServiceDemo(
+        CloudStorageAccount csa,
+        @Value("classpath:/cat.jpg") Resource cat) throws URISyntaxException, StorageException {
+        this.resource = cat;
+        this.cloudStorageAccount = csa;
+        this.files = this.cloudStorageAccount
+            .createCloudBlobClient()
+            .getContainerReference("files");
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void demo() throws Exception {
+        CloudBlockBlob blockBlobReference = this.files.getBlockBlobReference("cat-" + UUID.randomUUID().toString() + ".jpg");
+        try (InputStream in = this.resource.getInputStream()) {
+            blockBlobReference.upload(in, this.resource.contentLength());
+            log.info("uploaded blockblob to " + blockBlobReference.getStorageUri());
+        }
+
+    }
+}
+```
+
+The Microsoft Azure-specific bits are less than trivial. We obtain a reference to a container and then write to it and then log out the addressable URI of the resource. It is, if nothing else, _mundane_! And that's exactly what you want in a computing system primitive like a filesystem. It should be _mundane_. To be very honest, I was more pleased with getting to use Java 7's try-with-resources syntax for the `Autocloseable` `InputStream` reference!  
+
+
+# To Production! 
+
+This last post is really a quick wrapup post that looks at things to keep in mind when deploying an application built with Spring Boot and Micosoft Azure to production. 
+
+## Secure Configuration
+
+We've developed the application with ease and aplomb from the comfort of our local machines, plugging in the relevant confuguration values as we need them. Trouble is, these are often very sensitie values tht shouldn't be left laying around on the filesystem at rest, unencrypted. There are a _number_ of good solutions for this. You could of course deploy the Spring Cloud Config Service itself. If you're running [Pivotal Cloud Foundry on Microsoft Azure (or otherwise)](https://pivotal.io/partners/microsoft), this is the recommended way because it's a one-liner to get it deployed and working. You could of course deploy [Hashicorp Vault and use Spring Cloud Vault](https://www.hashicorp.com/resources/introduction-to-using-hashicorp-vault-with-azure). Or, you could store the keys and values in Microsoft's [own Key Vault service](https://azure.microsoft.com/en-us/services/key-vault/). In order to effectively use Key Vault you'll need to get into configuring Microsoft Active Directory which, while not something I'd wish on you or your loved ones, dear reader, is something in which I'm quite interested. 
+
+## Microsoft Active Directory 
+
+In my 20+ years of helping organizations build software I've seen nary a handful that _weren't_ using Microsoft Active Directory_ even if only from the LDAP interface. I hope Google gains more traction but let's be very clear: Active Directory is _the_ prevailing standard in enterprise IT. It is a way of life, even if you and I probably don't have to worry about it all that often in our idealized world of application development. And for good reason! It integrates the entire Windows desktop experience for the business professional. It's the beating heart of the Office365 story and it's the way organization organizes and self structures itself. Want to know if you got that promotion? Check Active Directory! Want to know where someone is seated? Check Active Directory! Want to force password resets? Maintain enterprise-wide audit logs? Fire someone? Check Active Directory! You may think your organizations runs Active Directory but lets be clear: it runs your organization. 
+
+Active Directory is a directoy server. It provides a tree of users, organizations and more. It acts as  identity manager for technologies like Microsoft CRM, Microsoft SQL Server, Microsoft Office and even Microsoft Windows itself. You can describe users, their rights and roles, and so much more in Active Directory. Which brings us back around. Microsoft Azure runs Active Directory for you! You can import and configure all the relevant information for your Microsoft Active Directory install right from the platform. [There's even a Spring Boot starter to connect Microsoft Azure to your OAuth-delegating Spring Boot- and Spring Security-powered applications](https://azure.microsoft.com/en-us/blog/spring-security-azure-ad/). Could you deploy and manage something like Microsoft SQL Server or Microsoft Active Directory yourself? Sure. But, _should you_?
+
+## Application Insights 
+
+As you scale out and spin up more microservices you'll introduce more and more moving parts and it becomes all the more critical to be able to observe the movement of data from one node to another in the system.  Here, the Microsoft Application Insights integration for Spring applications - which is for the moment at least delivered separate from the main Spring integration for Microsoft Azure - makes using it an cinch! 
 
 
 
-
-
-
-
-
+## Cloud Foundry 
 
