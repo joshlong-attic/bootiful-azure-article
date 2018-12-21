@@ -488,3 +488,69 @@ You'll then need to specify an `azure.application-insights.instrumentation-key` 
 
 ## Cloud Foundry 
 
+I'm all for using something like Microsoft Azure to simplify the work of standing up infrastructure where Microsoft can provided a differentiated experience. But running a Java process or a Node.js process? Stick to de-facto standard infrastructure like    Cloud Foundry or Kubernetes. It's fairly trivial to get Cloud Foundry deployed on top of Microsoft Azure and, once deployed, it's trivial to deploy Spring Boot applications there. It's often as simple as `cf push -p my.jar`. In the world of Cloud Foundry a _service broker_  is an HTTP API with which the platform interacts to manage the provisoning and lifecycle of... _something_. It could be a service  like MySQL or Apache Kafka. It could be an Active Directory  installation. It could be any of a number of things. The Microsoft and Pivotal teams have worked hand-in-hand to ensure that the service broker options for users running Pivotal Cloud Foundry on Microsoft Azure support [the tentpole services in a convenient way](https://docs.pivotal.io/partners/azure-sb/index.html). This list includes Microsoft Azure services like Azure Storage, Azure Redis Cache, Azure Service Bus, Azure Event Hubs, Azure SQL Databases (SQL Server, PostgreSQL and MySQL) and failover groups, and Azure CosmosDB.  
+
+You can inspect the Cloud Foundry service catalog by issuing a `cf marketplace` command on the CLI. It'll show you all the relevant services  and you can then choose to provision an instance of the service and its associated plan.  A plan describes the particular levels of service you can expect from a service broker  resource and is naturally specific to each service broker on offer. 
+
+Let's say you have a Spring Boot application deployed to Cloud Foundry, given the logical name `myapp`:
+
+```shell
+> cf push -p my.jar --no-start myapp 
+```
+
+
+Suppose you wanted to provision an instance of Microsoft SQL Server for your application, and you wanted to be able to reference that storage, logically, as `mydb`. Your session might look like this:
+
+```shell
+> cf create-service azure-sqldb basic mydb -c '{"sqlServerName": "Bootiful"}'
+```
+
+The service would soon be provisioned and usable from within an application. You'd just need to bind the service to your application, so that the relevant connectivity information could be injected into the application's environment as an environment variable.
+
+```shell
+cf bind-service myapp mydb
+cf restart myapp
+```
+
+Now your running Spring Boot application would have an environment variable, `VCAP_SERVICES`, whose contents would include the connection information for the just-provisioned service. It'd look something like this:
+
+
+```json
+"VCAP_SERVICES": {
+  "azure-sqldb": [
+    {
+      "credentials": {
+        "sqldbName": "fake-database",
+        "sqlServerName": "fake-server",
+        "sqlServerFullyQualifiedDomainName": "fake-server.database.windows.net",
+        "databaseLogin": "ulrich",
+        "databaseLoginPassword": "u1r8chP@ss",
+        "jdbcUrl": "jdbc:sqlserver://fake-server.database.windows.net:1433;database=fake-database;user=fake-admin;password=fake-password;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
+        "jdbcUrlForAuditingEnabled": "jdbc:sqlserver://fake-server.database.secure.windows.net:1433;database=fake-database;user=fake-admin;password=fake-password;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.secure.windows.net;loginTimeout=30",
+        "hostname": "fake-server.database.windows.net",
+        "port": 1433,
+        "name": "fake-database",
+        "username": "ulrich",
+        "password": "u1r8chP@ss",
+        "uri": "mssql://ulrich:u1r8chP@ss@fake-server.database.windows.net:1433/fake-database?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net"
+      }
+    }
+  ]
+}
+```
+
+In Spring Boot, you could reference these properties using a flattened  property access  syntax, e.g.: `vcap.services.mydb.credentials.jdbcUrl`. A common pattern here is to run applications  in the cloud with a Spring profile active. Say, `cloud`? That way you could put a config file  in your code under `application-cloud.properties` and that property file would be loaded when the application starts up in Cloud Foundry. You could put default, local configuration in `application-default.properties`. So, when Spring Boot starts with no profile specified it'll load the configuration in `application-default.properties`. When running in Cloud Foundry on Azure  it'd  load the configuration in `application-cloud.properties`. You could thus add the following to your `application-default.properties` file.
+
+```properties
+spring.datasource.url=${vcap.services.mydb.credentials.jdbcUrl}
+```
+
+Bootiful! 
+
+## The Next Steps 
+
+We've only just begun to scratch the surface of what's possible with  Spring, Microsoft Azure and Cloud Foundry in this and the posts before it. What should be clear is that there's a  nice symbiosis here, each technology making the layer below it even more powerful. It's no wonder that a ton of Azure's  workloads are Linux,  Spring Boot and Cloud Foundry-based: these things work well together.  
+
+ 
+
+

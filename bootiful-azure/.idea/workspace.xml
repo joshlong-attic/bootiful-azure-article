@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1146681c-8f01-40e1-b6f8-427599e8a361" name="Default Changelist" comment="">
+    <list default="true" id="f390dbf1-31d5-4f8f-86a1-b07610a2b0f3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/bootifulazure/ObjectStorageServiceDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/bootifulazure/ObjectStorageServiceDemo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,102 +15,22 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/BootifulAzureApplication.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/CosmosDbDemo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="24" column="26" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" selection-start-line="13" selection-end-line="13" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-spring-boot/2.0.5/azure-spring-boot-2.0.5-sources.jar!/com/microsoft/azure/spring/autoconfigure/servicebus/ServiceBusProperties.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="983">
-              <caret line="76" selection-start-line="76" selection-end-line="76" />
-              <folding>
-                <element signature="e#463#473#0" />
-                <element signature="e#2486#2487#0" expanded="true" />
-                <element signature="e#2532#2533#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-servicebus/1.2.5/azure-servicebus-1.2.5.jar!/com/microsoft/azure/servicebus/ReceiveMode.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
-              <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-spring-boot/2.0.5/azure-spring-boot-2.0.5-sources.jar!/com/microsoft/azure/spring/autoconfigure/servicebus/ServiceBusAutoConfiguration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="589">
-              <caret line="65" column="46" selection-start-line="65" selection-start-column="46" selection-end-line="65" selection-end-column="46" />
-            </state>
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/ObjectStorageServiceDemo.java">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="30" column="33" lean-forward="true" selection-start-line="30" selection-start-column="33" selection-end-line="30" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE-sources.jar!/org/springframework/core/io/Resource.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="50" column="3" lean-forward="true" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="665">
-              <caret line="56" column="4" selection-start-line="56" selection-start-column="4" selection-end-line="59" selection-end-column="21" />
+            <state relative-caret-position="154">
+              <caret line="7" column="34" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="34" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>\s+</find>
-    </findStrings>
-    <replaceStrings>
-      <replace />
-    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -117,9 +38,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/example/bootifulazure/CosmosDbDemo.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/com/example/bootifulazure/ObjectStorageServiceDemo.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application.properties" />
       </list>
     </option>
   </component>
@@ -134,19 +53,16 @@
     <option name="jreName" value="1.8" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="960" />
-    <option name="y" value="25" />
-    <option name="width" value="960" />
-    <option name="height" value="1055" />
+    <option name="y" value="23" />
+    <option name="width" value="1920" />
+    <option name="height" value="1177" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
-      <autoscrollFromSource ProjectPane="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -215,274 +131,26 @@
               <item name="bootiful-azure" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="example" type="462c0819:PsiDirectoryNode" />
-              <item name="bootifulazure" type="462c0819:PsiDirectoryNode" />
-              <item name="CosmosDbDemo" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bootiful-azure" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="example" type="462c0819:PsiDirectoryNode" />
-              <item name="bootifulazure" type="462c0819:PsiDirectoryNode" />
-              <item name="ObjectStorageServiceDemo" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bootiful-azure" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="example" type="462c0819:PsiDirectoryNode" />
-              <item name="bootifulazure" type="462c0819:PsiDirectoryNode" />
-              <item name="Reservation" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="bootiful-azure" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="servicebus" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-servicebus:1.2.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-servicebus-1.2.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="servicebus" type="462c0819:PsiDirectoryNode" />
-              <item name="ReceiveMode" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="spring" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="spring" type="462c0819:PsiDirectoryNode" />
-              <item name="autoconfigure" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="spring" type="462c0819:PsiDirectoryNode" />
-              <item name="autoconfigure" type="462c0819:PsiDirectoryNode" />
-              <item name="servicebus" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="spring" type="462c0819:PsiDirectoryNode" />
-              <item name="autoconfigure" type="462c0819:PsiDirectoryNode" />
-              <item name="servicebus" type="462c0819:PsiDirectoryNode" />
-              <item name="ServiceBusAutoConfiguration" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.microsoft.azure:azure-spring-boot:2.0.5" type="70bed36:NamedLibraryElementNode" />
-              <item name="azure-spring-boot-2.0.5.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="microsoft" type="462c0819:PsiDirectoryNode" />
-              <item name="azure" type="462c0819:PsiDirectoryNode" />
-              <item name="spring" type="462c0819:PsiDirectoryNode" />
-              <item name="autoconfigure" type="462c0819:PsiDirectoryNode" />
-              <item name="servicebus" type="462c0819:PsiDirectoryNode" />
-              <item name="ServiceBusProperties" type="1a9f42e2:ClassTreeNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="springframework" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="springframework" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="springframework" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="io" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="bootiful-azure" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.springframework:spring-core:5.0.10.RELEASE" type="70bed36:NamedLibraryElementNode" />
-              <item name="spring-core-5.0.10.RELEASE.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="springframework" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="io" type="462c0819:PsiDirectoryNode" />
-              <item name="Resource" type="1a9f42e2:ClassTreeNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
-      <pane id="ProjectFilesPane">
-        <option name="show-excluded-files" value="true" />
-        <option name="show-only-loaded-files" value="false" />
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="GO_FMT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1545360949613" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="/usr/bin/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -536,32 +204,38 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="1146681c-8f01-40e1-b6f8-427599e8a361" name="Default Changelist" comment="" />
-      <created>1545199284091</created>
+      <changelist id="f390dbf1-31d5-4f8f-86a1-b07610a2b0f3" name="Default Changelist" comment="" />
+      <created>1545430564657</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1545199284091</updated>
-      <workItem from="1545199287062" duration="113000" />
-      <workItem from="1545199424745" duration="8144000" />
+      <updated>1545430564657</updated>
+      <workItem from="1545430568272" duration="229000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8257000" />
+    <option name="totallyTimeSpent" value="284000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1920" height="1055" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="1177" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23692636" />
+      <window_info id="Designer" />
+      <window_info id="Image Layers" />
+      <window_info id="Capture Tool" />
+      <window_info id="UI Designer" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Web" side_tool="true" />
+      <window_info id="Learn" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24973376" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Designer" order="2" />
-      <window_info id="Image Layers" order="3" />
-      <window_info id="Capture Tool" order="4" />
-      <window_info id="UI Designer" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info id="Web" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Pants Console" />
+      <window_info anchor="bottom" id="Spring" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Java Enterprise" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -569,129 +243,30 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Spring" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Java Enterprise" order="11" />
-      <window_info anchor="bottom" id="Database Changes" order="12" />
-      <window_info anchor="bottom" id="Version Control" order="13" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Maven" />
+      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Google Cloud Storage" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Bean Validation" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Maven" order="3" />
-      <window_info anchor="right" id="Palette" order="4" />
-      <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="right" id="Bean Validation" order="9" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/Reservation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="133">
-            <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/CosmosDbDemo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="24" column="26" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-spring-boot/2.0.5/azure-spring-boot-2.0.5.jar!/com/microsoft/azure/spring/autoconfigure/servicebus/ServiceBusProperties.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="13" column="26" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
-          <folding>
-            <element signature="e#1808#1809#0" expanded="true" />
-            <element signature="e#1858#1859#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-servicebus/1.2.5/azure-servicebus-1.2.5.jar!/com/microsoft/azure/servicebus/ReceiveMode.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-spring-boot/2.0.5/azure-spring-boot-2.0.5-sources.jar!/com/microsoft/azure/spring/autoconfigure/servicebus/ServiceBusProperties.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="983">
-          <caret line="76" selection-start-line="76" selection-end-line="76" />
-          <folding>
-            <element signature="e#463#473#0" />
-            <element signature="e#2486#2487#0" expanded="true" />
-            <element signature="e#2532#2533#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/BootifulAzureApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/microsoft/azure/azure-spring-boot/2.0.5/azure-spring-boot-2.0.5-sources.jar!/com/microsoft/azure/spring/autoconfigure/servicebus/ServiceBusAutoConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="65" column="46" selection-start-line="65" selection-start-column="46" selection-end-line="65" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="665">
-          <caret line="56" column="4" selection-start-line="56" selection-start-column="4" selection-end-line="59" selection-end-column="21" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" selection-start-line="13" selection-end-line="13" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar!/org/springframework/core/io/Resource.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE-sources.jar!/org/springframework/core/io/Resource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="50" column="3" lean-forward="true" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/example/bootifulazure/ObjectStorageServiceDemo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="30" column="33" lean-forward="true" selection-start-line="30" selection-start-column="33" selection-end-line="30" selection-end-column="33" />
+        <state relative-caret-position="154">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -711,6 +286,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
+          <last-edited>Bundled Protobuf Distribution</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -722,7 +298,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>10</last-edited>
+          <last-edited>11</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
