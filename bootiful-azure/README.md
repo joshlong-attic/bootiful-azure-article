@@ -17,15 +17,6 @@
 
 In this installment we're going to introduce the Spring for Microsoft Azure support, focusing on the interesting technologies that are enabled by the platform for consumption from Spring applications. As with all such discussions, I feel it worth raising a few key points. 
 
-## Don't Run What You Can't Charge For 
-
-I think we can all agree with the new but old axim, you shouldn't run software that you can't charge for. That is, the average organization has enough problems. Running commodity software like MySQL or Kafka shouldn't be among them. It'll cost infinitely less to pay someone to run that for you. Ideally, whoever ends up running that software should have a vested interest in running those things well. Most organizations have a mission that's far away from configuring SSL, or debugging MySQL replication issues. It is virtually always cheaper to let someone else do that for you.  
-
-If you are trying to do something standard, then you should absolutely rely on standardized tools. Why use a cloud vendor's lockin-ware to run a Java or Node-based application when you could use something like Cloud Foundry or Kubernetes, for which the hiring pool is larger, the cost can be virtually nill, and the ease of use is on-par or better than whatever the cloud vendor is offering? 
-
-This is a big part of the reason that Microsoft and Pivotal have such a great relationship.  Enterprise customers understand that for some workloads the public cloud is a foregone conclusion, but they don't want to be locked in. Optionality is valuable. We see this all the time; GCP's prices were for some workload-types cheaper than AWS's. Some public cloud vendors have availability zones in regions you might want to be in that others dont. Increasingly, organizations embark upon hybrid cloud or mutlicloud strategies, knowing that their workloads will vary, and their availability demands will vary. As much as possible, these organizations want to reduce the cost of operationalizing, securing, training-up and deploying to the varities of cloud infrastructure. 
-
-Pivotal Cloud Foundry is a natural choice here; it allows organizations to deploy reliably to any of a number of cloud platforms and, as easily, and when necessary, drop down to platform-specific services. This fact is one of the reasons that Microsoft named Pivotal partner of the year in 2017 and 2018. We help drive resource usage on Microsoft Azure and we do so in as portable a way possible while still surfacing  the valuable and unique. 
 
 ## Data Gravity
 
@@ -488,9 +479,21 @@ You'll then need to specify an `azure.application-insights.instrumentation-key` 
 
 ## Cloud Foundry 
 
-I'm all for using something like Microsoft Azure to simplify the work of standing up infrastructure where Microsoft can provided a differentiated experience. But running a Java process or a Node.js process? Stick to de-facto standard infrastructure like    Cloud Foundry or Kubernetes. It's fairly trivial to get Cloud Foundry deployed on top of Microsoft Azure and, once deployed, it's trivial to deploy Spring Boot applications there. It's often as simple as `cf push -p my.jar`. In the world of Cloud Foundry a _service broker_  is an HTTP API with which the platform interacts to manage the provisoning and lifecycle of... _something_. It could be a service  like MySQL or Apache Kafka. It could be an Active Directory  installation. It could be any of a number of things. The Microsoft and Pivotal teams have worked hand-in-hand to ensure that the service broker options for users running Pivotal Cloud Foundry on Microsoft Azure support [the tentpole services in a convenient way](https://docs.pivotal.io/partners/azure-sb/index.html). This list includes Microsoft Azure services like Azure Storage, Azure Redis Cache, Azure Service Bus, Azure Event Hubs, Azure SQL Databases (SQL Server, PostgreSQL and MySQL) and failover groups, and Azure CosmosDB.  
 
-You can inspect the Cloud Foundry service catalog by issuing a `cf marketplace` command on the CLI. It'll show you all the relevant services  and you can then choose to provision an instance of the service and its associated plan.  A plan describes the particular levels of service you can expect from a service broker  resource and is naturally specific to each service broker on offer. 
+You shouldn't run software that you can't charge for. Pivotal legend [James Watters](http://twitter.com/WattersJames) often talks about work that's "below the value  line," and the idea that technologists and executives should focus on work that's above that value line for a given organization. The average organization has enough problems. Running commodity software like MySQL or Kafka shouldn't be among them. It'll cost infinitely less, over enough time, to pay someone to run that, whatever _that_ is, for you if someone else can do a competent job. Ideally, whoever ends up running that software should have a vested interest in running those things well. Most organizations have a mission that's far away from configuring SSL, or debugging MySQL replication issues. It is virtually always cheaper to let someone else do that for you.  
+
+If you are trying to do something standard, then you should absolutely rely on standardized tools. Why use a cloud vendor's lockin-ware to run a Java or Node-based application when you could use something like Cloud Foundry or Kubernetes, for which the hiring pool is larger, the cost can be virtually nill, and the ease of use is on-par or better than whatever the cloud vendor is offering? 
+
+This is a big part of the reason that Microsoft and Pivotal have such a great relationship. Enterprise customers understand that for some workloads the public cloud is a foregone conclusion, but they don't want to be locked in. Optionality is valuable. Being able to move to a different platform is valuable. Agility - the ability to respond to change - is _valuable_. We see this all the time; Google Cloud  Platform's prices were for some workload-types cheaper than Amazon Web Services at its debuts. Some public cloud vendors have availability zones in regions you might want to be in that others dont. Increasingly, organizations embark upon hybrid cloud or mutlicloud strategies, knowing that their workloads will vary, and their availability demands will vary. As much as possible, these organizations want to reduce the cost of operationalizing, securing, training-up and deploying to the varities of cloud infrastructure. 
+
+Pivotal Cloud Foundry is a natural choice here; it allows organizations to deploy reliably to any of a number of cloud platforms and, as easily, and when necessary, drop down to platform-specific services. This fact is one of the reasons that Microsoft named Pivotal partner of the year in 2017 and 2018. Pivotal Cloud Foundry, our distribution of the Apache 2 licensed open-source Cloud Foundry project, helps drive resource usage on Microsoft Azure and does so in as portable a way possible while still surfacing  that which is valuable and unique. 
+
+
+I'm all for using something like Microsoft Azure to simplify the work of standing up infrastructure where Microsoft can provide a differentiated experience. But running a Java process or a Node.js process? Stick to de-facto standard infrastructure like Cloud Foundry or Kubernetes. It's fairly trivial to get Cloud Foundry deployed on top of Microsoft Azure and, once deployed, it's trivial to deploy Spring Boot applications there. It's often as simple as `cf push -p my.jar`. You'll need  the Cloud Foundry CLI, [of course](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
+
+In the world of Cloud Foundry a _service broker_ is an HTTP API with which the Cloud Foundry platform interacts to manage the provisoning and lifecycle of... _something_. It could be a database like MySQL or a message queue like Apache Kafka. It could be an Active Directory installation  or a CosmosDB connection. It could be any of a number of things. The Microsoft and Pivotal teams have worked hand-in-hand to ensure that the service broker options for users running Pivotal Cloud Foundry on Microsoft Azure support [the tentpole services in as convenient a way possible](https://docs.pivotal.io/partners/azure-sb/index.html). This list includes Microsoft Azure services like Azure Storage, Azure Redis Cache, Azure Service Bus, Azure Event Hubs, Azure SQL Databases (SQL Server, PostgreSQL and MySQL) and failover groups, and Azure CosmosDB.  
+
+You can inspect the Cloud Foundry service catalog by issuing a `cf marketplace` command on the CLI. It'll show you all the relevant services and you can then choose to provision an instance of the service and its associated plan. A plan describes the particular levels of service you can expect from a service broker  resource and is naturally specific to each service broker on offer. 
 
 Let's say you have a Spring Boot application deployed to Cloud Foundry, given the logical name `myapp`:
 
@@ -498,8 +501,7 @@ Let's say you have a Spring Boot application deployed to Cloud Foundry, given th
 > cf push -p my.jar --no-start myapp 
 ```
 
-
-Suppose you wanted to provision an instance of Microsoft SQL Server for your application, and you wanted to be able to reference that storage, logically, as `mydb`. Your session might look like this:
+Suppose you wanted to provision an instance of Microsoft SQL Server for your application, and you wanted to be able to reference that database, logically, as `mydb`. Your session might look like this. The following command would provision an instance of SQL Server, with parameters specified via inline JSON or a `.json` file path,  and  assign it a logical name `mydb`. 
 
 ```shell
 > cf create-service azure-sqldb basic mydb -c '{"sqlServerName": "Bootiful"}'
@@ -539,7 +541,7 @@ Now your running Spring Boot application would have an environment variable, `VC
 }
 ```
 
-In Spring Boot, you could reference these properties using a flattened  property access  syntax, e.g.: `vcap.services.mydb.credentials.jdbcUrl`. A common pattern here is to run applications  in the cloud with a Spring profile active. Say, `cloud`? That way you could put a config file  in your code under `application-cloud.properties` and that property file would be loaded when the application starts up in Cloud Foundry. You could put default, local configuration in `application-default.properties`. So, when Spring Boot starts with no profile specified it'll load the configuration in `application-default.properties`. When running in Cloud Foundry on Azure  it'd  load the configuration in `application-cloud.properties`. You could thus add the following to your `application-default.properties` file.
+In Spring Boot, you could reference these properties using a flattened property access syntax, e.g.: `vcap.services.mydb.credentials.jdbcUrl`. A common pattern here is to run applications  in the cloud with a Spring profile active. Say, `cloud`? That way you could put a config file  in your code under `application-cloud.properties` and that property file would be loaded when the application starts up in Cloud Foundry. You could put default, local configuration in `application-default.properties`. So, when Spring Boot starts with no profile specified it'll load the configuration in `application-default.properties`. When running in Cloud Foundry on Azure  it'd  load the configuration in `application-cloud.properties`. You could thus add the following to your `application-default.properties` file.
 
 ```properties
 spring.datasource.url=${vcap.services.mydb.credentials.jdbcUrl}
