@@ -229,7 +229,7 @@ SQL Server is a compelling database for a number of use cases and the fact that 
 
 # Bootiful Azure: Global Scale Data Access with CosmosDB
 
-I can hear you thinking - yes, not even your feintest thoughts escape me! - that you like Microsoft SQL Server, but it's definitely something you could've run yourself, on any platform. To which I say, "yep!" It sure is nice that Microosft runs it for us, though, isn't it?"  
+I can hear you thinking - yes, not even your feintest thoughts escape me! - that while you like Microsoft SQL Server as much as the next developer, it's certainly   something you could've run yourself, on any platform. You don't _need_ Microsoft to run it for you. To which I say, "yep!" (But it sure is nice that Microosft runs it for us, though, isn't it?")
 
 But I concede the point. What can Azure do for you? You don't need to look much further than  Microsoft Azure CosmosDB. CosmosDB is actually an umbrella name - it describes a single product that can be used in mutliple ways. It's a single, multi-model, multi-modal database that supports  document data, SQL queries, graph data access, and more.
 
@@ -247,11 +247,11 @@ You can specify time-to-live (TTL) values for the containers, as well, letting C
 
 First of all, CosmosDB is schemaless. Keep that mind when using it - it can have some important ramifications if you're not prepared.  
 
-CosmosDB supports a multi-model, multi-paradigm approach to building applications. Clients can talk to the HTTP REST API and drive it using a SQL-like language for queries. You can create, update and delete containers  using the SQL API, too.
+CosmosDB supports a multi-model, multi-paradigm approach to building applications. Clients can talk to the HTTP REST API and drive it using a SQL-like language for queries. You can create, update and delete containers using the SQL API, too.
 
-You can talk to CosmosDB using the MongDB API, supporting collections as xontrainer and documents as items.
+You can talk to CosmosDB using the MongDB API, supporting collections as contrainer and documents as items.
 
-You can talk to it using the Gremlin API supporting graphis ad container sand nodes and edfges as items. According to the Gremlin website, "Gremlin is the graph traversal language of Apache TinkerPop. Gremlin is a functional, data-flow language that enables users to succinctly express complex traversals on (or queries of) their application's property graph." So,  basically a way to traverse data in a graph.
+You can talk to it using the Gremlin API supporting graphis and containers and nodes and edges as items. According to the Gremlin website, "Gremlin is the graph traversal language of Apache TinkerPop. Gremlin is a functional, data-flow language that enables users to succinctly express complex traversals on (or queries of) their application's property graph." So, it's basically a way to traverse data in a graph.
 
 You can talk to CosmosDB using the Cassandra API supporting tables as containers and rows as items. The Cassandra API even supports the Cassandra query language (CQL).
 
