@@ -55,8 +55,23 @@ From here onward, I'll introduce Maven-repository dependency coordinates using t
 
 If you want to follow along with these examples  using the  `az` CLI installed on your local machine, you'll need to run `az login`. Otherwise you  can launch the Microsoft Azure Cloud Shell from within  the Azure portal. It'll give you two choices: Bash or Powershell. 
 
-<img src="images/2-azure-portal-cloud-shell.png" width  = "600" />
+<img src="images/2-azure-portal-cloud-shell.png" width="600" />
 
+## Resource Groups 
+
+Once you're logged in you'll need to configure a resource group. A resource group is a named collection of resources. This is a convenient thing to have around because you can standup all the resources related to this introduction to Spring and Microsoft Azure, associating each with this resource group, and then, when you're all done, destroy the resource group and it'll cascade delete everything associated with it. 
+
+This makes billing, lifecycle administration and so much more very convenient! Each resource group is associated with a region. Microsoft Azure have tons of regions on which you can run your services. As of this writing, [there are 54 regions worldwide](https://azure.microsoft.com/en-us/global-infrastructure/regions/), more than any other cloud provider. 
+
+Here's how you would create a resource group called `bootiful` in the `West US 2` location of the US.  We'll use this in subsequent examples. 
+
+```shell
+az group create --name bootiful  --location "West US 2"
+```
+
+You can run the following command to iterate all the possible locations: `az account list-locations`. You'll notice that as we issue commands we need to associate resources with a particular region on creation. This can be tedious, so it's helpful to specify a default location and then omit it on subsequent invocations, like this: `az configure --defaults location=westus`.
+
+Confirm that everything is working by running `az configure`. 
 
 ## The Cloud Foundry Service Broker
 
@@ -80,6 +95,9 @@ Windows NT was released in July 1993 and Sybase and Microsoft took differing dir
 
 Let's configure an instance of Microsoft SQL Server using the `az` CLI tool. 
 
+```shell
+
+```
 
 * source the configuration values
 * install the sample database
