@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 
 @Log4j2
-@Component
+//@Component
 class ServiceBusProducer implements Ordered {
 
 	private final ITopicClient iTopicClient;

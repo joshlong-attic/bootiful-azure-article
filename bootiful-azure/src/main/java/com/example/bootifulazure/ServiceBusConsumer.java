@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Log4j2
-@Component
+//@Component
 class ServiceBusConsumer implements Ordered {
 
 	private final ISubscriptionClient iSubscriptionClient;

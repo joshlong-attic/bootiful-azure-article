@@ -1,5 +1,6 @@
 package com.example.bootifulazure;
 
+/*
 import com.microsoft.azure.spring.data.cosmosdb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,3 +16,4 @@ class Reservation {
 	private String id;
 	private String name;
 }
+*/

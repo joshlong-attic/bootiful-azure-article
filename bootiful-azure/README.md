@@ -66,10 +66,10 @@ This makes billing, lifecycle administration and so much more very convenient! E
 Here's how you would create a resource group called `bootiful` in the `West US 2` location of the US.  We'll use this in subsequent examples. 
 
 ```shell
-az group create --name bootiful  --location "West US 2"
+az group create --name bootiful --location "West US 2"
 ```
 
-You can run the following command to iterate all the possible locations: `az account list-locations`. You'll notice that as we issue commands we need to associate resources with a particular region on creation. This can be tedious, so it's helpful to specify a default location and then omit it on subsequent invocations, like this: `az configure --defaults location=westus`.
+You can run the following command to iterate all the possible locations: `az account list-locations`. You'll notice that as we issue commands we need to associate resources with a particular location on creation, usually with `-l` or `--location`. This can be tedious, so it's helpful to specify a default location and then omit it on subsequent invocations, like this: `az configure --defaults location=westus`.
 
 Confirm that everything is working by running `az configure`. 
 
@@ -93,14 +93,67 @@ Windows NT was released in July 1993 and Sybase and Microsoft took differing dir
 
 ## Configuring SQL Server on Microsoft Azure
 
-Let's configure an instance of Microsoft SQL Server using the `az` CLI tool. 
+So, it was my hope to show you how to follow these instructions in the user interface in terms of screenshots but that seemed less than ideal because things in the Azure portal tend to be... squirmy. Things move around. Also, these things are infinitely less scriptable. So, we're going to use the `az` CLI. Trouble is, it's ... tedious. 
+
+Logically, what we want to do is trivial. We want to:
+
+* create a SQL Server server instance 
+* create a SQL Server database in the server. We're going to preload this database with an existing database schema.
+* expose the SQL Server instance to client accesses from our computer
+
+We're going to use a script to do this work:
 
 ```shell
+#!/bin/bash
+
+# Set an admin login and password for your database
+export adminlogin=bootiful
+export password=B00t1ful
+
+# The logical server name has to be unique in the system
+export servername=bootiful-${RANDOM}
+
+# The ip address range that you want to allow to access your DB
+export startip=0.0.0.0
+export endip=0.0.0.0
+
+# the name of the resource group
+export rg=bootiful
+
+# create a logical server in the resource group
+az sql server create \
+    --name $servername \
+    --resource-group $rg \
+    --admin-user $adminlogin \
+    --admin-password $password
+
+# configure a firewall rule for the server
+az sql server firewall-rule create \
+    --resource-group $rg \
+    --server $servername \
+    -n AllowYourIp \
+    --start-ip-address $startip \
+    --end-ip-address $endip
+
+# create a database in the server with zone redundancy as true
+az sql db create \
+    --resource-group $rg \
+    --server $servername \
+    --name mySampleDatabase \
+    --sample-name AdventureWorksLT \
+    --service-objective S0 \
 
 ```
 
-* source the configuration values
-* install the sample database
+This should dump out a _wall_ of JSON! Yikes! I culled this example from the Azure documentation and thank goodness, too! I don't think I would want to have to arrive at this solution by myself. You're going to want to note the `name` attribute in the first JSON stanza printed to the console. We used the `$RANDOM` variable to generate a, well, _random_ name, so it'll be different on your machine. On my machine the value was `bootiful-22952`. 
+
+ Now, you've got a working server and a working database within the server. If you poke around the Azure Portal you'll gleam all the connection information required to connect to the database. _Or_, you could use this _one simple trick_.  
+
+```shell
+az sql db show-connection-string --client jdbc --name mySampleDatabase
+```
+
+It'll give you client connection strings for a number of technologies, including JDBC. You'll need to replace the `<server>`, `<username>` and `<password>` section of the URI with the appropriate values, in this case `bootiful-22952`, `bootiful` and `B00t1ful` respectively.
 
 ## Introducing SQL Server into your Spring Application
 
@@ -193,9 +246,7 @@ You can talk to CosmosDB using the Cassandra API supporting tables as containers
 
 You can _also_ talk to it using the AZure Table Storage API supporting tables as containers and items as... well.. _items_.
 
-CosmosDB also embeds a JavaScript engine so you can use JavaScript to define triggers, user-defined functions that can be called from, and augment, the SQL query language, and stored procedures. Stored procedures can manage a number of  actions in a single ACID-compliant transaction.  
-
-
+CosmosDB also embeds a JavaScript engine so you can use JavaScript to define triggers, user-defined functions that can be called from, and augment, the SQL query language, and stored procedures. Stored procedures can manage a number of actions in a single ACID-compliant transaction.  
 
 ## Configuring CosmosDB  on Microsoft Azure
 
