@@ -29,15 +29,11 @@ Let's take a look at Microsoft Azure itself. You'll need to login to the portal 
 
 In this series we'll focus on leveraging the platform's strengths - the things where Microsoft offer differentiating advantages through their Azure platform. You can achieve most of what we're going to introduce in this article using the `az` command-line tool. It's easy enough to install on multiple operating systems since it's written in Python. Consult [this the documentation for more information](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) on how to install the Microsoft Azure CLI, `az`.
 
-
-That's about it. Assuming you have an  Azure account and the `az` CLI ready to use, you're ready to start coding. Azure doesn't have a platform-wide notion of authentication. You authenticate per-service. This makes working with each individual service straightforward, but it means that - holistically - you worry about authentication more often upfront then you  do when  using, for example, Google Cloud.  This is not to  say that one introduces more work. With Google Cloud you have to often and explicitly "opt-in" to a particular service before you can use it. So, six of one, a half dozen of the other, I suppose.
+That's about it. Assuming you have an Azure account and the `az` CLI ready to use, you're ready to start coding. Azure doesn't have a platform-wide notion of authentication. You authenticate per-service. This makes working with each individual service straightforward, but it means that - holistically - you worry about authentication more often upfront then you do when using, for example, Google Cloud. This isn't to say that one introduces more work. With Google Cloud you have to often and explicitly "opt-in" to a particular service before you can use it. So: six of one, a half dozen of the other, I suppose.
 
 You start new projects using Spring Boot, as you might  expect, with [the Spring Initializr](http://start.Spring.io). Select `Azure Support` in addition to whatever else you want to use. Alternatively, if you want to introduce the Microsoft Azure dependencies to an existing application you can add a Maven bill-of-materials (BOM) artifact to your Spring Boot project's Maven or Gradle build manually. Here's how you'd do it for Maven.
 
-
-
 ```xml
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -49,32 +45,41 @@ You start new projects using Spring Boot, as you might  expect, with [the Spring
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 ```
 
 In my case, the Maven property `azure.version`, was set to `2.0.5`.
 
-From here onward, I'll introduce dependency coordinates using the Ivy syntax: `groupId` : `artifactId`  :  `version`. Sometimes, the `version` isn't required so I'll omit it since the BOM will manage  those versions for us.
+From here onward, I'll introduce Maven-repository dependency coordinates using the Ivy syntax: `groupId` : `artifactId` : `version`. Sometimes, the `version` isn't required so I'll omit it since the BOM will manage those versions for us.
+
+## Authentication 
+
+If you want to follow along with these examples  using the  `az` CLI installed on your local machine, you'll need to run `az login`. Otherwise you  can launch the Microsoft Azure Cloud Shell from within  the Azure portal. It'll give you two choices: Bash or Powershell. 
+
+<img src="images/2-azure-portal-cloud-shell.png" width  = "600" />
+
 
 ## The Cloud Foundry Service Broker
 
 There's [a Cloud Foundry service broker](https://pivotal.io/platform/services-marketplace/data-management/microsoft-azure) that you can use to quickly spin up various Microsoft Azure services and then bind them to your application. This service broker makes running applications on Cloud Foundry, especially on top of Microsoft Azure, the easiest path to production for applications targeting Microsoft Azure services.
 
-There ya have it! You know everything you need to know to setup a Spring application to leverage services on Microsoft Azure.
+There ya go! You now know everything you need to know to setup a Spring application to leverage services on Microsoft Azure.
 
 # Bootiful Azure: SQL-based data access with Microsoft SQL Server  
 
-Let's start with something short and sweet, the legendary Microsoft SQL Server. Microsoft SQL Server is an interesting beast. Sure, you can run it yourself, but wouldn't you rather Microsoft, who build the product itself, do that for you? Now _that_ is a full-service solution! Imagine how nice that is? You don't often see that sort of solution in other contexts. Imagine buying a car that you can drive as fast as you'd like, and on which the the manufacturer will guarantee any and all maintenance and repairs? Forever? Even if the car is hit with an asteroid? This is why running Microsoft SQL Server on Microsoft Azure is so appealing to me.
+Let's start with something short and sweet, the legendary Microsoft SQL Server. Microsoft SQL Server is an interesting beast. Sure, you can run it yourself, but wouldn't you rather Microsoft, who build the product itself, do that for you? Now _that_ is a full-service solution! Imagine how nice that is? You don't often see that sort of solution in other contexts. Imagine buying a car that you can drive as fast as you'd like, and on which the the manufacturer will guarantee any and all maintenance and repairs? Forever? Even if the car is hit with an asteroid? This is why running Microsoft SQL Server on Microsoft Azure is so appealing: the drudgery of the ownership is removed.
 
-Now, don't get me wrong. There's plenty to recommend SQL Server in its own right. SQL Server has been around since 1989! It's routinely ranked up there with the likes of Oracle DB and PostgreSQL as being among the most feature-filled database options out there. It's been built over decades to serve enterprise use cases. It's even got things that other databases, including the venerable  PostgreSQL, sometimes lack, like Transparent Data Encryption wherein data is transparenly encrypted at rest.
+Don't get me wrong. There's plenty to recommend SQL Server in its own right. SQL Server has been around since 1989! It's routinely ranked up there with the likes of Oracle DB and PostgreSQL as being among the most feature-filled database options out there. It's been built over decades to serve enterprise use cases. It's even got things that other databases, including the venerable PostgreSQL, sometimes lack, like Transparent Data Encryption wherein data is transparenly encrypted at rest.
 
-SQL Server has its origins as an enterprise-grade database that ran on one operating system.... OS/2! Wait, OS/2? Surely you mean Microsoft Windows? Not so much, as it happens. Yep, Microsoft joined Ashton-Tate and Sybase in the late 1980s to create a variant of Sybase SQL Server for IBM OS/2 (developed jointly with Microsoft at the time), which was released the following year.
+SQL Server has its origins as an enterprise-grade database that ran on one operating system.... OS/2! Wait, OS/2? Surely you meant Microsoft Windows? Nope! Microsoft joined Ashton-Tate and Sybase in the late 1980s to create a variant of Sybase SQL Server for IBM OS/2 (developed jointly with Microsoft at the time), which was released the following year.
 
 This was the first version of Microsoft SQL Server, and served as Microsoft's entry to the enterprise-level database market, competing against Oracle, IBM, and later, Sybase. SQL Server 6.0 was the first version designed for NT without direction from Sybase.
 
 Windows NT was released in July 1993 and Sybase and Microsoft took differing directions. Each pursued its own design and marketing schemes. Microsoft negotiated exclusive rights to all versions of SQL Server written for Microsoft operating systems. Sybase and Microsoft SQL Server are two very different things today, with radically different codebases. Now, Microsoft maintain several editions of SQL Server for different usecases and workloads. It's hard to qualify why Microsoft SQL Server is so amazing, so I'll instead refer you to this [pretty exhaustive Wikipedia page demonstrating](https://en.wikipedia.org/wiki/Comparison_of_relational_database_management_systems) different features acrosss various SQL database engines. Microsoft SQL Server fares pretty well!
 
 ## Configuring SQL Server on Microsoft Azure
+
+Let's configure an instance of Microsoft SQL Server using the `az` CLI tool. 
+
 
 * source the configuration values
 * install the sample database
