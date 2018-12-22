@@ -36,4 +36,4 @@ az sql db create \
 	--server $servername \
 	--name ${1}-sample-db \
 	--sample-name AdventureWorksLT \
-	--service-objective S0 \
+	--service-objective Basic \

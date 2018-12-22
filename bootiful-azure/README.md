@@ -111,23 +111,24 @@ export adminlogin=bootiful
 export password=B00t1ful
 
 # The logical server name has to be unique in the system
-export servername=bootiful-${RANDOM}
+export servername=${1}-server
 
 # The ip address range that you want to allow to access your DB
 export startip=0.0.0.0
-export endip=0.0.0.0
+export endip=223.255.255.255
 
 # the name of the resource group
-export rg=bootiful
+export rg=$1
 
-# create a logical server in the resource group
+
+# Create a logical server in the resource group
 az sql server create \
     --name $servername \
     --resource-group $rg \
     --admin-user $adminlogin \
     --admin-password $password
 
-# configure a firewall rule for the server
+# Configure a firewall rule for the server
 az sql server firewall-rule create \
     --resource-group $rg \
     --server $servername \
@@ -135,13 +136,14 @@ az sql server firewall-rule create \
     --start-ip-address $startip \
     --end-ip-address $endip
 
-# create a database in the server with zone redundancy as true
+# Create a database in the server with zone redundancy as true
 az sql db create \
     --resource-group $rg \
     --server $servername \
-    --name mySampleDatabase \
+    --name ${1}-sample-db \
     --sample-name AdventureWorksLT \
-    --service-objective S0 \
+    --service-objective Basic  
+
 
 ```
 
@@ -150,25 +152,33 @@ This should dump out a _wall_ of JSON! Yikes! I culled this example from the Azu
  Now, you've got a working server and a working database within the server. If you poke around the Azure Portal you'll gleam all the connection information required to connect to the database. _Or_, you could use this _one simple trick_.  
 
 ```shell
-az sql db show-connection-string --client jdbc --name mySampleDatabase
+az sql db show-connection-string --client jdbc --name bootiful-sample-db
 ```
 
-It'll give you client connection strings for a number of technologies, including JDBC. You'll need to replace the `<server>`, `<username>` and `<password>` section of the URI with the appropriate values, in this case `bootiful-22952`, `bootiful` and `B00t1ful` respectively.
+This command gives you client connection strings for a number of technologies, including the Windows ADO subsystem, Java's JDBC driver interface, and PHP's PDO interface. You'll need to replace the `<server>`, `<username>` and `<password>` section of the URI with the appropriate values, in this case `bootiful-server`, `bootiful` and `B00t1ful` respectively. Alternatively, as we'll see in a moment, you can define properties and use property placeholder resolution to parameterize this part of the connection string.
 
 ## Introducing SQL Server into your Spring Application
 
 Now that we've got a freshly confiugured SQL Server instrance up and running we need only use it like we would any other JDBC dependency in our codde. If you're using the Spring Initialzir you can select `SQL Server` and the appropriate dependency will be added to your Maven or Gradle build. Or, you can add it manually to your build using the following coordinates: `com.microsoft.sqlserver` : `mssql-jdbc`. You don't need to specify the version; that's done for you by Spring Boot itself. This particular dependency and itnegration with Microosft technologies doesn't even require  a particular Maven bill-of-materials dependency - it just works.
 
-Then, you'll need to specify the usual confiuguration properites so that Spring can instnantatie a connection tot he `DataSource` for you.
+Then, you'll need to specify the usual confiuguration properites so that Spring can instnantatie a connection to the `DataSource` for you.
 
-```properties
-#sql-server-pw=SOURCE THIS FROM AN ENVIRONMENT VARIABLE
-spring.datasource.password=${sql-server-pw}
-spring.datasource.url=jdbc:sqlserver://host:1433;database=bootiful-adventures;user=bootiful-adventures-admin@bootiful-adventures;password=${sql-server-pw};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-spring.datasource.username=bootiful-adventures-admin
+```properties;
+
+# These should be environment variables, e.g.: export SQL_DB=...
+sql-db=bootiful-sample-db
+sql-username=bootiful
+sql-password=B00t1ful
+sql-servername=bootiful-server
+
+# standard Spring Boot properties  
+spring.datasource.url=jdbc:sqlserver://${sql-servername}.database.windows.net:1433;database=${sql-db};user=${sql-username}@${sql-servername};password=${sql-password};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30
+spring.datasource.username=${sql-username}
+spring.datasource.password=${sql-password}
+
 ```
 
-Now it's trivial to use the resulting connection using any technology that supports both JDBC, gneerally, and Microsoft SQL Server, specifically.
+I've encoded the username and password here, in the property file. This is a bad idea. Generally, this is exactly the sort of thing you will want to live in an environment variable or in a configuration service like Spring Cloud Config Server. That setup out of the way, it's trivial to use the resulting connection with any technology that supports both JDBC, generally, and Microsoft SQL Server, specifically.
 
 ```java
 package com.example.bootifulazure;
@@ -215,6 +225,7 @@ class SqlServerDemo {
 
 ```
 
+SQL Server is a compelling database for a number of use cases and the fact that Microsoft Azure makes scaling it so easy is a win for everyone. It's worth mentioning that R2DBC, an effort at reactive SQL datastore access, already offers a Microsoft SQL Server implementation, in addition to H2 and PostgreSQL. You can even do reactive SQL Server access for even faster applications. All, seemingly, at the push of a button (or at least a tedious deployment script).
 
 # Bootiful Azure: Global Scale Data Access with CosmosDB
 
