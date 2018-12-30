@@ -259,10 +259,12 @@ You can _also_ talk to it using the AZure Table Storage API supporting tables as
 
 CosmosDB also embeds a JavaScript engine so you can use JavaScript to define triggers, user-defined functions that can be called from, and augment, the SQL query language, and stored procedures. Stored procedures can manage a number of actions in a single ACID-compliant transaction.  
 
-## Configuring CosmosDB  on Microsoft Azure
+## Configuring CosmosDB on Microsoft Azure
 
 * source the configuration values
 * install the sample database
+
+
 
 ## Introducing CosmosDB into your Spring Application
 
@@ -297,6 +299,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @Document(collection = "reservations")
 class Reservation {
+    
     @Id
     private String id;
     private String name;
