@@ -16,26 +16,26 @@ import java.util.List;
 @Log4j2
 class SqlServerDemo {
 
-	private final JdbcTemplate jdbcTemplate;
+		private final JdbcTemplate jdbcTemplate;
 
-	SqlServerDemo(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
+		SqlServerDemo(JdbcTemplate jdbcTemplate) {
+				this.jdbcTemplate = jdbcTemplate;
+		}
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void demo() {
-		String query = "select TOP 5  * from SalesLT.Customer ";
-		RowMapper<Customer> rowMapper =
-			(rs, rowNum) -> new Customer(rs.getLong("customerid"), rs.getString("firstname"), rs.getString("lastname"));
-		List<Customer> customerList = this.jdbcTemplate.query(query, rowMapper);
-		customerList.forEach(log::info);
-	}
+		@EventListener(ApplicationReadyEvent.class)
+		public void demo() {
+				String query = "select TOP 3  * from customer ";
+				RowMapper<Customer> rowMapper =
+					(rs, rowNum) -> new Customer(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"));
+				List<Customer> customerList = this.jdbcTemplate.query(query, rowMapper);
+				customerList.forEach(log::info);
+		}
 
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	private static class Customer {
-		private Long id;
-		private String firstName, lastName;
-	}
+		@Data
+		@AllArgsConstructor
+		@NoArgsConstructor
+		private static class Customer {
+				private Long id;
+				private String firstName, lastName;
+		}
 }

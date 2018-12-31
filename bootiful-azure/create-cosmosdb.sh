@@ -2,10 +2,6 @@
 
 # Set an admin login and password for your database
 export adminlogin=bootiful
-export password=B00t1ful
-
-# The logical server name has to be unique in the system
-export servername=${1}-server
 
 # The ip address range that you want to allow to access your DB
 export startip=0.0.0.0
@@ -14,13 +10,13 @@ export endip=223.255.255.255
 # the name of the resource group
 export rg=$1
 
-#!/bin/bash
+
 
 
 location='southcentralus'
 accountname=$adminlogin
-databasename=$rg 
-containername=${rg}-reservations
+databasename=bootiful
+containername=reservations
 
 
 # Create a SQL API Cosmos DB account with session consistency and multi-master enabled
@@ -46,5 +42,5 @@ az cosmosdb collection create \
     --collection-name $containername \
     --name $adminlogin \
     --db-name $databasename \
-    --partition-key-path /mypartitionkey \
+    --partition-key-path /id \
     --throughput 1000

@@ -98,7 +98,7 @@ So, it was my hope to show you how to follow these instructions in the user inte
 Logically, what we want to do is trivial. We want to:
 
 * create a SQL Server server instance 
-* create a SQL Server database in the server. We're going to preload this database with an existing database schema.
+* create a SQL Server database in the server. Our Spring Boot application will preload this with a sample schema and data.
 * expose the SQL Server instance to client accesses from our computer
 
 We're going to use a script to do this work:
@@ -120,7 +120,6 @@ export endip=223.255.255.255
 # the name of the resource group
 export rg=$1
 
-
 # Create a logical server in the resource group
 az sql server create \
     --name $servername \
@@ -141,10 +140,7 @@ az sql db create \
     --resource-group $rg \
     --server $servername \
     --name ${1}-sample-db \
-    --sample-name AdventureWorksLT \
-    --service-objective Basic  
-
-
+    --service-objective Basic
 ```
 
 This should dump out a _wall_ of JSON! Yikes! I culled this example from the Azure documentation and thank goodness, too! I don't think I would want to have to arrive at this solution by myself. You're going to want to note the `name` attribute in the first JSON stanza printed to the console. We used the `$RANDOM` variable to generate a, well, _random_ name, so it'll be different on your machine. On my machine the value was `bootiful-22952`. 
@@ -161,17 +157,15 @@ This command gives you client connection strings for a number of technologies, i
 
 Now that we've got a freshly confiugured SQL Server instrance up and running we need only use it like we would any other JDBC dependency in our codde. If you're using the Spring Initialzir you can select `SQL Server` and the appropriate dependency will be added to your Maven or Gradle build. Or, you can add it manually to your build using the following coordinates: `com.microsoft.sqlserver` : `mssql-jdbc`. You don't need to specify the version; that's done for you by Spring Boot itself. This particular dependency and itnegration with Microosft technologies doesn't even require  a particular Maven bill-of-materials dependency - it just works.
 
-Then, you'll need to specify the usual confiuguration properites so that Spring can instnantatie a connection to the `DataSource` for you.
+Then, you'll need to specify the usual confiuguration properites so that Spring can instnantiate a connection to the `DataSource` for you.
 
 ```properties;
 
-# These should be environment variables, e.g.: export SQL_DB=...
 sql-db=bootiful-sample-db
 sql-username=bootiful
 sql-password=B00t1ful
 sql-servername=bootiful-server
 
-# standard Spring Boot properties  
 spring.datasource.url=jdbc:sqlserver://${sql-servername}.database.windows.net:1433;database=${sql-db};user=${sql-username}@${sql-servername};password=${sql-password};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30
 spring.datasource.username=${sql-username}
 spring.datasource.password=${sql-password}
@@ -179,6 +173,33 @@ spring.datasource.password=${sql-password}
 ```
 
 I've encoded the username and password here, in the property file. This is a bad idea. Generally, this is exactly the sort of thing you will want to live in an environment variable or in a configuration service like Spring Cloud Config Server. That setup out of the way, it's trivial to use the resulting connection with any technology that supports both JDBC, generally, and Microsoft SQL Server, specifically.
+
+Our application will consume data that needs to be installed in the database beforehand. Spring can help us out here. Spring Boot will automatically execute `src/main/resources/schema.sql` and `src/main/resources/data.sql` against the configured `DataSource`. This makes them ideal places to put schema and sample data, respectively. 
+
+Here is our `src/main/resources/schema.sql`.
+
+```sql 
+create table customer
+(
+  id         INT          NOT NULL IDENTITY PRIMARY KEY,
+  first_name varchar(255) not null,
+  last_name  varchar(255) not null
+);
+```
+
+Here is our `src/main/resources/data.sql`.
+
+```sql
+insert into customer(first_name, last_name)
+values ('james', 'watters'),
+       ('bob', 'lee'),
+       ('trisha', 'gee'),
+       ('mario', 'gray'),
+       ('spencer', 'gibb'),
+       ('yitao', 'dong');
+```
+
+Both will have been executed before our various event listeners. Let's look at an event listener that pulls that data back out using a `JdbcTemplate`. 
 
 ```java
 package com.example.bootifulazure;
@@ -199,30 +220,29 @@ import java.util.List;
 @Log4j2
 class SqlServerDemo {
 
-    private final JdbcTemplate jdbcTemplate;
+        private final JdbcTemplate jdbcTemplate;
 
-    SqlServerDemo(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+        SqlServerDemo(JdbcTemplate jdbcTemplate) {
+                this.jdbcTemplate = jdbcTemplate;
+        }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void demo() {
-        String query = "select TOP 5  * from SalesLT.Customer ";
-        RowMapper<Customer> rowMapper =
-            (rs, rowNum) -> new Customer(rs.getLong("customerid"), rs.getString("firstname"), rs.getString("lastname"));
-        List<Customer> customerList = this.jdbcTemplate.query(query, rowMapper);
-        customerList.forEach(log::info);
-    }
+        @EventListener(ApplicationReadyEvent.class)
+        public void demo() {
+                String query = " select TOP 3 * from customer ";
+                RowMapper<Customer> rowMapper =
+                    (rs, rowNum) -> new Customer(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"));
+                List<Customer> customerList = this.jdbcTemplate.query(query, rowMapper);
+                customerList.forEach(log::info);
+        }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class Customer {
-        private Long id;
-        private String firstName, lastName;
-    }
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        private static class Customer {
+                private Long id;
+                private String firstName, lastName;
+        }
 }
-
 ```
 
 SQL Server is a compelling database for a number of use cases and the fact that Microsoft Azure makes scaling it so easy is a win for everyone. It's worth mentioning that R2DBC, an effort at reactive SQL datastore access, already offers a Microsoft SQL Server implementation, in addition to H2 and PostgreSQL. You can even do reactive SQL Server access for even faster applications. All, seemingly, at the push of a button (or at least a tedious deployment script).
@@ -261,8 +281,54 @@ CosmosDB also embeds a JavaScript engine so you can use JavaScript to define tri
 
 ## Configuring CosmosDB on Microsoft Azure
 
-* source the configuration values
-* install the sample database
+We'll first create a geo-distributed instance of CosmosDB and then create a database instance within. Finally, we'll create a collection.
+
+Here's a script that does all of this. It should be familiar if you followed the SQL Server script. The only notable thing is that we don't have to specify the firewall rules.
+
+```shell
+#!/bin/bash
+
+# Set an admin login and password for your database
+export adminlogin=bootiful
+
+# The ip address range that you want to allow to access your DB
+export startip=0.0.0.0
+export endip=223.255.255.255
+
+# the name of the resource group
+export rg=$1
+
+accountname=$adminlogin
+databasename=bootiful
+containername=reservations
+
+
+# Create a SQL API Cosmos DB account with session consistency and multi-master enabled
+az cosmosdb create \
+    --resource-group $rg \
+    --name $adminlogin \
+    --kind GlobalDocumentDB \
+    --locations "South Central US"=0 "North Central US"=1 \
+    --default-consistency-level "Session" \
+    --enable-multiple-write-locations true
+
+# Create a database
+az cosmosdb database create \
+    --resource-group $rg \
+    --name $adminlogin \
+    --db-name $databasename
+
+# Create a SQL API container with a partition key and 1000 RU/s
+az cosmosdb collection create \
+    --resource-group $rg \
+    --collection-name $containername \
+    --name $adminlogin \
+    --db-name $databasename \
+    --partition-key-path /id \
+    --throughput 1000
+
+```
+
 
 
 
@@ -299,11 +365,11 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @Document(collection = "reservations")
 class Reservation {
-    
     @Id
     private String id;
     private String name;
 }
+
 ```
 
 Mostly, this looks like any other Lombok-annotated POJO you've ever seen. Of particular note, of course, is that the entity uses `@Document` from the Spring Data CosmosDB namespace. In it, we specify the `reservations` collection.
