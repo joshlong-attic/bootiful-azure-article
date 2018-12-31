@@ -179,6 +179,7 @@ Our application will consume data that needs to be installed in the database bef
 Here is our `src/main/resources/schema.sql`.
 
 ```sql 
+drop table customer; 
 create table customer
 (
   id         INT          NOT NULL IDENTITY PRIMARY KEY,
@@ -249,11 +250,11 @@ SQL Server is a compelling database for a number of use cases and the fact that 
 
 # Bootiful Azure: Global Scale Data Access with CosmosDB
 
-I can hear you thinking - yes, not even your feintest thoughts escape me! - that while you like Microsoft SQL Server as much as the next developer, it's certainly   something you could've run yourself, on any platform. You don't _need_ Microsoft to run it for you. To which I say, "yep!" (But it sure is nice that Microosft runs it for us, though, isn't it?")
+I can hear you thinking - yes, not even your feintest thoughts escape me! - that while you like Microsoft SQL Server as much as the next developer, it's certainly something you could've run yourself, on any platform (cloud or otherwise!). You don't _need_ Microsoft to run it for you. To which I say, "yep!" (But it sure is nice that Microosft runs it for us, though, isn't it?)
 
-But I concede the point. What can Azure do for you? You don't need to look much further than  Microsoft Azure CosmosDB. CosmosDB is actually an umbrella name - it describes a single product that can be used in mutliple ways. It's a single, multi-model, multi-modal database that supports  document data, SQL queries, graph data access, and more.
+I concede the point. What can Azure do for you? You don't need to look much further than Microsoft Azure CosmosDB. CosmosDB refers to a suite of technologies. It describes a single product that can be used in mutliple ways. It's a single, multi-model, multi-modal database that supports  document data, SQL queries, graph data access, and more.
 
-Per [the product web page](https://azure.microsoft.com/en-us/services/cosmos-db/): CosmosDB was bult from the ground up iwth global didstibution and h9orizontal scale at its core. guarantees single-digit-millisecond read and write latencies at the 99th percentile, and guarantees 99.999 high availability with multi-homing anywhere in the world—all backed by industry-leading, comprehensive service level agreements (SLAs).
+Per [the product web page](https://azure.microsoft.com/en-us/services/cosmos-db/): CosmosDB was built from the ground up iwth global didstibution and h9orizontal scale at its core. guarantees single-digit-millisecond read and write latencies at the 99th percentile, and guarantees 99.999 high availability with multi-homing anywhere in the world—all backed by industry-leading, comprehensive service level agreements (SLAs).
 
 ## Items and Containers
 
@@ -281,36 +282,26 @@ CosmosDB also embeds a JavaScript engine so you can use JavaScript to define tri
 
 ## Configuring CosmosDB on Microsoft Azure
 
-We'll first create a geo-distributed instance of CosmosDB and then create a database instance within. Finally, we'll create a collection.
-
-Here's a script that does all of this. It should be familiar if you followed the SQL Server script. The only notable thing is that we don't have to specify the firewall rules.
+You'll need to first create a (potentially geographically distributed) instance of CosmosDB and then create a database instance within. Then, you'll need to create a collection to store the records. Here's a script. The only notable thing is that we don't have to specify the firewall exemptions as we did in the SQL Server example. It just works (TM).
 
 ```shell
 #!/bin/bash
 
-# Set an admin login and password for your database
-export adminlogin=bootiful
-
-# The ip address range that you want to allow to access your DB
-export startip=0.0.0.0
-export endip=223.255.255.255
-
 # the name of the resource group
 export rg=$1
+export adminlogin=${rg}-cosmosdb
 
-accountname=$adminlogin
+location='southcentralus'
+accountname=${adminlogin}
 databasename=bootiful
 containername=reservations
-
 
 # Create a SQL API Cosmos DB account with session consistency and multi-master enabled
 az cosmosdb create \
     --resource-group $rg \
     --name $adminlogin \
     --kind GlobalDocumentDB \
-    --locations "South Central US"=0 "North Central US"=1 \
-    --default-consistency-level "Session" \
-    --enable-multiple-write-locations true
+    --default-consistency-level "Session" 
 
 # Create a database
 az cosmosdb database create \
@@ -326,57 +317,70 @@ az cosmosdb collection create \
     --db-name $databasename \
     --partition-key-path /id \
     --throughput 1000
-
 ```
 
+In this script we could've specified the regions in which want the new database made available. You can also do this conveniently from the Azure Portal, through a handy map. Just click a region and it'll take care of the rest! 
 
+Also, note the resulting `$adminlogin` value for later. 
 
+Now, you'll need to lay hands on the required configuration strings to connect your application to your new database and its data. You could sift through the output of the previous commands, but the following incantation is so much easier.
+
+```shell
+az cosmosdb list-keys --resource-group bootiful --name bootiful-cosmosdb
+```
+
+You'll need to note the value of the resulting `primaryMasterKey` attribute from the previous command in order to later connect to CosmosDB. 
 
 ## Introducing CosmosDB into your Spring Application
 
-Alrighty - with all that established let's look at its use in a Spring application. You _could_, in theory, talk to it through the appropriate abstractions for the aforementioned technologies like MongoDB and Cassandra, but I prefer to use the Spring Data CosmosDB abstraction. CosmosDB was historically called Microosft DocumentDB. So, for historical reasons, we need to use the Maven dependency that references that old project name. Add the relevant starter dependency, `com.microsoft.azure`:`azure-documentdb-spring-boot-starter`, to your build file.
+Let's look at CosmosDB's use in a Spring application. You _could_, in theory, talk to CosmosDB through the appropriate abstractions for the aforementioned technologies (like MongoDB and Cassandra). I prefer to use the Spring Data CosmosDB abstraction, whose starter dependency you'll need to add to the build file. 
 
+CosmosDB was historically called DocumentDB. If you see those names, they are almost interchangeable. For historical reasons, you'll need to add the Maven starter dependency that references that old project name,  `com.microsoft.azure`:`azure-documentdb-spring-boot-starter`, to your build file.
 
-Then we'll have to configure the relevant connection in our properties files.
-
+Then you'll have to configure the relevant connection information. You could add something like the following to your application's `application.properties` file.
 
 ```java
-azure.documentdb.database=DB_NAME
-azure.documentdb.uri=https://URI.documents.azure.com:443/
-azure.documentdb.key=KEY
+azure.documentdb.database=bootiful
+azure.documentdb.key=THIS_IS_THE_KEY_FROM_BEFORE
+azure.documentdb.uri=https://ADMINLOGIN.documents.azure.com:443/
 ```
 
-Replace the property values with the relevant and appropriate string values.
+The `database` property refers to the database (`bootiful`, because we used the resource group name as the database name) within the logical CosmosDB instance (`bootiful-cosmosdb`, which is what we specified with `$adminlogin` in our script).  The key refers to the `primaryMasterKey` value from the `az cosmosdb list-keys` command. Replace the property values with the relevant and appropriate string values.
 
-Now we must define an object class to map it to our record. This will be an entity. We'll use the Spring Data DocumentDB mapping annotations.
+I ran this project just fine on a macOS based system, but I hit an odd issue when running it on my Ubuntu 18.10-based system. There's an oddity in the way that the Spring client libraries for CosmosDB gather telemetry that results in a NPE. If you encounter this, add the following to `src/main/resources/application.properties` to disable the telemetry.
 
+```properties
+cosmosdb.telemetryAllowed=false 
+```
+
+Next, you should define a Spring Data entity to map to the records in the CosmosDB collection, `reservations`.  
 
 ```java
 package com.example.bootifulazure;
 
 import com.microsoft.azure.spring.data.cosmosdb.core.mapping.Document;
+import com.microsoft.azure.spring.data.cosmosdb.core.mapping.PartitionKey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "reservations")
 class Reservation {
-    @Id
-    private String id;
-    private String name;
-}
 
+        @PartitionKey
+        private String id;
+        private String name;
+}
 ```
 
 Mostly, this looks like any other Lombok-annotated POJO you've ever seen. Of particular note, of course, is that the entity uses `@Document` from the Spring Data CosmosDB namespace. In it, we specify the `reservations` collection.
 
-Thd `Id` annotation is standard Spring Data. Note, however, that it's good practice to use a `String` - monotonically incrementing primary keys aren't a great idea in planet-scale distributed systems.
+Our entity uses a CosmosDB-specific annotation, `@PartitionKey`, to signal to the database which field this record should honor. Note that it's good practice to use a `String` - monotonically incrementing primary keys aren't a great idea in planet-scale distributed systems! 
 
-Now, we need to flesh out the Spring Data repository to support our entity.
+Now, define the Spring Data repository building on the `DocumentDbRepository`.
 
 ```java  
 package com.example.bootifulazure;
@@ -387,7 +391,7 @@ interface ReservationRepository extends DocumentDbRepository<Reservation, String
 }
 ```
 
-Simple enough! We're using a `DocumentDbRepository`, but otherwise everything is as you'd expect it if you've ever used Spring Data. Using it is straightforward from this point. We'll use exercise some of the usual behavior in the repository definition in an event listener.  
+We're using a `DocumentDbRepository`, but otherwise everything is as you'd expect it if you've ever used Spring Data. Using it is straightforward from this point. We'll use exercise some of the usual behavior in the repository definition in an event listener.  
 
 ```java
 package com.example.bootifulazure;
@@ -397,6 +401,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Log4j2
@@ -415,13 +420,12 @@ class CosmosDbDemo {
         this.rr.deleteAll();
 
         Stream.of("A", "B", "C")
-            .map(name -> new Reservation(null, name))
+            .map(name -> new Reservation(UUID.randomUUID().toString(), name))
             .map(this.rr::save)
             .forEach(log::info);
 
     }
 }
-
 ```
 
 # Bootiful Azure: Integration with Azure Service Bus

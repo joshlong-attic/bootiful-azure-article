@@ -1,3 +1,4 @@
+drop table customer;
 create table customer
 (
   id         INT          NOT NULL IDENTITY PRIMARY KEY,
