@@ -170,13 +170,15 @@ spring.datasource.url=jdbc:sqlserver://${sql-servername}.database.windows.net:14
 spring.datasource.username=${sql-username}
 spring.datasource.password=${sql-password}
 
+spring.datasource.initialization-mode=always
+
 ```
 
-I've encoded the username and password here, in the property file. This is a bad idea. Generally, this is exactly the sort of thing you will want to live in an environment variable or in a configuration service like Spring Cloud Config Server. That setup out of the way, it's trivial to use the resulting connection with any technology that supports both JDBC, generally, and Microsoft SQL Server, specifically.
+I've encoded the username and password here, in the property file. This is a **bad** idea. Generally, this is exactly the sort of thing you will want to live in an environment variable or in a configuration service like Spring Cloud Config Server. That setup out of the way, it's trivial to use the resulting connection with any technology that supports both JDBC, generally, and Microsoft SQL Server, specifically.
 
-Our application will consume data that needs to be installed in the database beforehand. Spring can help us out here. Spring Boot will automatically execute `src/main/resources/schema.sql` and `src/main/resources/data.sql` against the configured `DataSource`. This makes them ideal places to put schema and sample data, respectively. 
+Our application will consume data that needs to be installed in the database beforehand. Spring can help us out here. Spring Boot can automatically execute `src/main/resources/schema.sql` and `src/main/resources/data.sql` against the configured `DataSource` if you specify `spring.datasource.initialization-mode=always` in your properties. `schema.sql` is an ideal place  in which to put database DDL, and `data.sql` is an ideal place in which to put sample data.
 
-Here is our `src/main/resources/schema.sql`.
+Here is `src/main/resources/schema.sql`.
 
 ```sql 
 drop table customer; 
@@ -376,9 +378,7 @@ class Reservation {
 }
 ```
 
-Mostly, this looks like any other Lombok-annotated POJO you've ever seen. Of particular note, of course, is that the entity uses `@Document` from the Spring Data CosmosDB namespace. In it, we specify the `reservations` collection.
-
-Our entity uses a CosmosDB-specific annotation, `@PartitionKey`, to signal to the database which field this record should honor. Note that it's good practice to use a `String` - monotonically incrementing primary keys aren't a great idea in planet-scale distributed systems! 
+Mostly, this looks like any other Lombok-annotated POJO you've ever seen. Of particular note is that the entity uses `@Document` from the Spring Data CosmosDB module to specify the `reservations` collection to which this entity maps. The entity uses a CosmosDB-specific annotation, `@PartitionKey`, to signal to the database which field to use when deciding to partition (logically or physically) possibly related data in a container. It's good practice to use a `String` for the partition key. Monotonically incrementing primary keys aren't a great idea in planet-scale distributed systems! 
 
 Now, define the Spring Data repository building on the `DocumentDbRepository`.
 
@@ -391,7 +391,7 @@ interface ReservationRepository extends DocumentDbRepository<Reservation, String
 }
 ```
 
-We're using a `DocumentDbRepository`, but otherwise everything is as you'd expect it if you've ever used Spring Data. Using it is straightforward from this point. We'll use exercise some of the usual behavior in the repository definition in an event listener.  
+The `DocumentDbRepository` might be new, but this should be otherwise straightforward.
 
 ```java
 package com.example.bootifulazure;
