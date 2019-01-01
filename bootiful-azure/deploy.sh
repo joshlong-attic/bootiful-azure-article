@@ -5,3 +5,4 @@ NAME=bootiful
 ./create-resource-group.sh $NAME
 ./create-sql-server.sh $NAME
 ./create-cosmosdb.sh $NAME
+./create-servicebus.sh $NAME

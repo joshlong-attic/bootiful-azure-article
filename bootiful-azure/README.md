@@ -145,7 +145,7 @@ az sql db create \
 
 This should dump out a _wall_ of JSON! Yikes! I culled this example from the Azure documentation and thank goodness, too! I don't think I would want to have to arrive at this solution by myself. You're going to want to note the `name` attribute in the first JSON stanza printed to the console. We used the `$RANDOM` variable to generate a, well, _random_ name, so it'll be different on your machine. On my machine the value was `bootiful-22952`. 
 
- Now, you've got a working server and a working database within the server. If you poke around the Azure Portal you'll gleam all the connection information required to connect to the database. _Or_, you could use this _one simple trick_.  
+Now, you've got a working server and a working database within the server. If you poke around the Azure Portal you'll gleam all the connection information required to connect to the database. _Or_, you could use this _one simple trick_.  
 
 ```shell
 az sql db show-connection-string --client jdbc --name bootiful-sample-db
@@ -430,9 +430,9 @@ class CosmosDbDemo {
 
 # Bootiful Azure: Integration with Azure Service Bus
 
-Azure Service Bus is a cloud messaging as a service and integration technology. It is, just like CosmosDB, as flexible as possible. It [supports the AMQP 1.0 protocol](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), like RabbitMQ. AMQP is a flexible wire protocol. The protocol itself includes instructions for administering the broker, beyond just interacting with it. AMQP brokers are ideal for integration because they are language- and platform-agnostic.  In an AMQP broker producers send messages to _exchanges_ which then route the messages to _queues_, from which consumers then read the messages. The exchange is responsible for deciding to which queue the message should be sent. It does this in any of a number of ways but it usually involves looking at a key in the message headers called the _routing key_.
+Azure Service Bus is a cloud messaging as a service and integration technology. It is, just like CosmosDB, as flexible as possible. It [supports the AMQP 1.0 protocol](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), like RabbitMQ. AMQP is a flexible wire protocol. The protocol itself includes instructions for administering the broker, beyond just interacting with it. AMQP brokers are ideal for integration because they are language- and platform-agnostic. In an AMQP broker producers send messages to _exchanges_ which then route the messages to _queues_, from which consumers then read the messages. The exchange is responsible for deciding to which queue the message should be sent. It does this in any of a number of ways but it usually involves looking at a key in the message headers called the _routing key_.
 
-This indirection between the exhcange and the queues makes AMQP a bit more flexible than JMS-based brokers where producers  send messages  directly to `Destination` objects  that consumers then read from. This means that producers and consumers are coupled by their  choice of `Destination`. Additionally,  JMS is an API for the JVM, it is  not a wire protocol. As  such, producers and consumers are dependent on the version  of  the library they're using being correct. That said, [you can also use Azure Service Bus through the JMS API](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp), if you want, as well.
+This indirection between the exhcange and the queues makes AMQP a bit more flexible than JMS-based brokers where producers send messages directly to `Destination` objects  that consumers then read from. This means that producers and consumers are coupled by their choice of `Destination`. Additionally, JMS is an API for the JVM, it is not a wire protocol. As such, producers and consumers are dependent on the version of the library they're using being correct. That said, [you can also use Azure Service Bus through the JMS API](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp).
 
 Like I said, Azure Service Bus is nothing if not flexible!
 
@@ -441,7 +441,29 @@ The AMQP model is illustrative because, basically, the native model for Azure Se
 
 ## Configuring Azure Service Bus on Microsoft Azure
 
-...
+You'll need to provision a namespace, a topic and a subscription to connect to the topic. Here's an example script.
+
+```shell
+#!/usr/bin/env bash
+
+destination=messages
+topic=${destination}-topic
+subscription=${destination}-subscription
+namespace=bootiful
+rg=$1
+
+az servicebus namespace create --resource-group $rg --name ${namespace}
+az servicebus topic create --resource-group $rg --namespace-name  ${namespace} --name ${topic}
+az servicebus topic subscription create --resource-group $rg --namespace-name  ${namespace} --topic-name ${topic} --name ${subscription}
+```
+
+You'll need a connection string in order to connect your Spring application to the sericebus. Run this command and note the `primaryConnectionString` attribute value.
+
+```shell
+az servicebus namespace authorization-rule keys list --resource-group bootiful --namespace-name bootiful --name RootManageSharedAccessKey
+```
+
+
 
 ## Introducing Azure Service Bus into your Spring Application
 

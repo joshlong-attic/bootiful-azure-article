@@ -14,37 +14,37 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Log4j2
-//@Component
+@Component
 class ServiceBusConsumer implements Ordered {
 
-	private final ISubscriptionClient iSubscriptionClient;
+		private final ISubscriptionClient iSubscriptionClient;
 
-	ServiceBusConsumer(ISubscriptionClient iSubscriptionClient) {
-		this.iSubscriptionClient = iSubscriptionClient;
-	}
+		ServiceBusConsumer(ISubscriptionClient iSubscriptionClient) {
+				this.iSubscriptionClient = iSubscriptionClient;
+		}
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void consume() throws Exception {
+		@EventListener(ApplicationReadyEvent.class)
+		public void consume() throws Exception {
 
-		this.iSubscriptionClient.registerMessageHandler(new IMessageHandler() {
+				this.iSubscriptionClient.registerMessageHandler(new IMessageHandler() {
 
-			@Override
-			public CompletableFuture<Void> onMessageAsync(IMessage message) {
-				log.info("received message " + new String(message.getBody()) + " with body ID " + message.getMessageId());
-				return CompletableFuture.completedFuture(null);
-			}
+						@Override
+						public CompletableFuture<Void> onMessageAsync(IMessage message) {
+								log.info("received message " + new String(message.getBody()) + " with body ID " + message.getMessageId());
+								return CompletableFuture.completedFuture(null);
+						}
 
-			@Override
-			public void notifyException(Throwable exception, ExceptionPhase phase) {
-				log.error("eeks!", exception);
-			}
-		});
+						@Override
+						public void notifyException(Throwable exception, ExceptionPhase phase) {
+								log.error("eeks!", exception);
+						}
+				});
 
-	}
+		}
 
-	// we want this to start up before the Producer
-	@Override
-	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE;
-	}
+		// we want this to start up before the Producer
+		@Override
+		public int getOrder() {
+				return Ordered.HIGHEST_PRECEDENCE;
+		}
 }
