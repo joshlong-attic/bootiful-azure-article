@@ -7,3 +7,4 @@ NAME=bootiful
 ./create-cosmosdb.sh $NAME
 ./create-servicebus.sh $NAME
 ./create-oss.sh $NAME
+./create-app-insights.sh $NAME

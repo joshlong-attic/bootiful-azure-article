@@ -660,38 +660,55 @@ The Microsoft Azure-specific bits are less than trivial. We obtain a reference t
 
 # To Production!
 
-This last post is really a quick wrapup post that looks at things to keep in mind when deploying an application built with Spring Boot and Micosoft Azure to production.
+This last post in our series looking at Microsoft Azure is really a quick wrapup post that looks at things to keep in mind when deploying an application built with Spring Boot and Micosoft Azure to production.
 
 ## Secure Configuration
 
-We've developed the application with ease and aplomb from the comfort of our local machines, plugging in the relevant confuguration values as we need them. Trouble is, these are often very sensitie values tht shouldn't be left laying around on the filesystem at rest, unencrypted. There are a _number_ of good solutions for this. You could of course deploy the Spring Cloud Config Service itself. If you're running [Pivotal Cloud Foundry on Microsoft Azure (or otherwise)](https://pivotal.io/partners/microsoft), this is the recommended way because it's a one-liner to get it deployed and working. You could of course deploy [Hashicorp Vault and use Spring Cloud Vault](https://www.hashicorp.com/resources/introduction-to-using-hashicorp-vault-with-azure). Or, you could store the keys and values in Microsoft's [own Key Vault service](https://azure.microsoft.com/en-us/services/key-vault/). In order to effectively use Key Vault you'll need to get into configuring Microsoft Active Directory which, while not something I'd wish on you or your loved ones, dear reader, is something in which I'm quite interested.
+We've developed the application with ease and aplomb from the comfort of our local machines, plugging in the relevant confuguration values as we need them. Trouble is, these are often very sensitie values tht shouldn't be left laying around on the filesystem at rest, unencrypted. There are a _number_ of good solutions for this. You could of course deploy the Spring Cloud Config Service itself. If you're running [Pivotal Cloud Foundry on Microsoft Azure (or otherwise)](https://pivotal.io/partners/microsoft), this is the recommended way because it's a one-liner to get it deployed and working. You could of course deploy [Hashicorp Vault and use Spring Cloud Vault](https://www.hashicorp.com/resources/introduction-to-using-hashicorp-vault-with-azure). Or, you could store the keys and values in Microsoft's [own Key Vault service](https://azure.microsoft.com/en-us/services/key-vault/). In order to effectively use Key Vault you'll need to get into configuring Microsoft Active Directory which, while not something I'd wish on you or your loved ones, dear reader, is something in which I'm *quite* interested.
 
 ## Microsoft Active Directory
 
-In my 20+ years of helping organizations build software I've seen nary a handful that _weren't_ using Microsoft Active Directory_ even if only from the LDAP interface. I hope Google gains more traction but let's be very clear: Active Directory is _the_ prevailing standard in enterprise IT. It is a way of life, even if you and I probably don't have to worry about it all that often in our idealized world of application development. And for good reason! It integrates the entire Windows desktop experience for the business professional. It's the beating heart of the Office365 story and it's the way organization organizes and self structures itself. Want to know if you got that promotion? Check Active Directory! Want to know where someone is seated? Check Active Directory! Want to force password resets? Maintain enterprise-wide audit logs? _Fire someone_? Check Active Directory! You may think your organizations runs Active Directory but lets be clear: it runs your organization.
+In my 20+ years of helping organizations build software I've seen nary a handful that _weren't_ using Microsoft Active Directory even if only from the LDAP interface.  Sure, I hope Google Apps gains more traction in the enterprise, but let's be very clear: Active Directory is _the_ prevailing standard in enterprise IT. It is a way of life, even if you and I probably don't have to worry about it all that often in our idealized world of application development. And for good reason! It integrates the entire Windows desktop experience for the business professional. It's the beating heart of the Office365 story and it's the way organization organizes and self structures itself. Want to know if you got that promotion? Check Active Directory! Want to know where someone is seated? Check Active Directory! Want to force password resets? Maintain enterprise-wide audit logs? _Fire someone_? Check Active Directory! You may think your organizations runs Active Directory but lets be clear: it runs your organization.
 
-Active Directory is a directoy server. It provides a tree of users, organizations and more. It acts as  identity manager for technologies like Microsoft CRM, Microsoft SQL Server, Microsoft Office and even Microsoft Windows itself. You can describe users, their rights and roles, and so much more in Active Directory. Which brings us back around. Microsoft Azure runs Active Directory for you! You can import and configure all the relevant information for your Microsoft Active Directory install right from the platform. [There's even a Spring Boot starter to connect Microsoft Azure to your OAuth-delegating Spring Boot- and Spring Security-powered applications](https://azure.microsoft.com/en-us/blog/spring-security-azure-ad/). Could you deploy and manage something like Microsoft SQL Server or Microsoft Active Directory yourself? Sure. But, _should you_?
+Active Directory is a directoy server. It provides a tree of users, organizations and more. It acts as identity manager for technologies like Microsoft CRM, Microsoft SQL Server, Microsoft Office and even Microsoft Windows itself. You can describe users, their rights and roles, and so much more in Active Directory. Which brings us back around. Microsoft Azure runs Active Directory for you! You can import and configure all the relevant information for your Microsoft Active Directory install right from the platform. [There's even a Spring Boot starter to connect Microsoft Azure to your OAuth-delegating Spring Boot- and Spring Security-powered applications](https://azure.microsoft.com/en-us/blog/spring-security-azure-ad/). Could you deploy and manage something like Microsoft SQL Server or Microsoft Active Directory yourself? Sure. But, _should you_?
 
 ## Application Insights
 
 As you scale out and spin up more microservices you'll introduce more and more moving parts and it becomes all the more critical to be able to observe the movement of data from one node to another in the system.  Here, the Microsoft Application Insights integration for Spring applications - which is for the moment at least delivered separate from the main Spring integration for Microsoft Azure - makes using it an cinch! Add `com.microsoft.azure`: `applicationinsights-spring-boot-starter` : `1.1.0-BETA`  to your build file.
 
-You'll then need to specify an `azure.application-insights.instrumentation-key` and to give your application a  `spring.application.name` name. Which, to be fair, you should do anyway. That's it! Restart your application, drive some traffic through an HTTP endpoint and then login to the Microsoft Application Insights dashboard and watch the instrumentation in action!
+You can script the creation of an Application Insights subscription, like this: 
 
-// TODO obtaining the key
-// TODO screenshot of APp Insights
+```shell
+#!/usr/bin/env bash
+
+rg=$1
+appname=${rg}-appinsights
+
+az resource create \
+    --resource-group $rg \
+    --resource-type "Microsoft.Insights/components" \
+    --name $appname \
+    --location "South Central US" \
+    --properties '{"ApplicationId":"bootiful","Application_Type":"web"}'
+```
+
+That'll create a subscription and bind it to the `bootiful` resource group. Use the following command to access the resulting key (assuming the same `$rg` and `$appname` variables are in scope):
+
+```shell
+az resource show -g $rg -n $appname --resource-type "Microsoft.Insights/components" --query properties.InstrumentationKey
+```
+
+You'll then need to specify the `azure.application-insights.instrumentation-key` and to give your application a `spring.application.name` name. Which, to be fair, you should do anyway. That's it! Restart your application, drive some traffic through an HTTP endpoint in your application (even just running on `localhost`) and then login to the Microsoft Application Insights dashboard and watch the instrumentation in action!
 
 ## Cloud Foundry
 
-
-You shouldn't run software that you can't charge for. Pivotal legend [James Watters](http://twitter.com/WattersJames) often talks about work that's "below the value  line," and the idea that technologists and executives should focus on work that's above that value line for a given organization. The average organization has enough problems. Running commodity software like MySQL or Kafka shouldn't be among them. It'll cost infinitely less, over enough time, to pay someone to run that, whatever _that_ is, for you if someone else can do a competent job. Ideally, whoever ends up running that software should have a vested interest in running those things well. Most organizations have a mission that's far away from configuring SSL, or debugging MySQL replication issues. It is virtually always cheaper to let someone else do that for you.  
+You shouldn't run software that you can't charge for. Pivotal legend [James Watters](http://twitter.com/WattersJames) often talks about work that's "below the value line," and the idea that technologists and executives should focus on work that's above that value line for a given organization. The average organization has enough problems. Running commodity software like MySQL or Kafka shouldn't be among them. Running things that don't differentiate your business shouldn't be among them. It'll cost infinitely less, over enough time, to pay someone to run that, whatever _that_ is, for you if someone else can do a competent job. Ideally, whoever ends up running that software should have a vested interest in running those things well. Most organizations have a mission anything but configuring SSL, or debugging MySQL replication issues. It is virtually always cheaper to let someone else do that for you.  
 
 If you are trying to do something standard, then you should absolutely rely on standardized tools. Why use a cloud vendor's lockin-ware to run a Java or Node-based application when you could use something like Cloud Foundry or Kubernetes, for which the hiring pool is larger, the cost can be virtually nill, and the ease of use is on-par or better than whatever the cloud vendor is offering?
 
 This is a big part of the reason that Microsoft and Pivotal have such a great relationship. Enterprise customers understand that for some workloads the public cloud is a foregone conclusion, but they don't want to be locked in. Optionality is valuable. Being able to move to a different platform is valuable. Agility - the ability to respond to change - is _valuable_. We see this all the time; Google Cloud  Platform's prices were for some workload-types cheaper than Amazon Web Services at its debuts. Some public cloud vendors have availability zones in regions you might want to be in that others dont. Increasingly, organizations embark upon hybrid cloud or mutlicloud strategies, knowing that their workloads will vary, and their availability demands will vary. As much as possible, these organizations want to reduce the cost of operationalizing, securing, training-up and deploying to the varities of cloud infrastructure.
 
 Pivotal Cloud Foundry is a natural choice here; it allows organizations to deploy reliably to any of a number of cloud platforms and, as easily, and when necessary, drop down to platform-specific services. This fact is one of the reasons that Microsoft named Pivotal partner of the year in 2017 and 2018. Pivotal Cloud Foundry, our distribution of the Apache 2 licensed open-source Cloud Foundry project, helps drive resource usage on Microsoft Azure and does so in as portable a way possible while still surfacing  that which is valuable and unique.
-
 
 I'm all for using something like Microsoft Azure to simplify the work of standing up infrastructure where Microsoft can provide a differentiated experience. But running a Java process or a Node.js process? Stick to de-facto standard infrastructure like Cloud Foundry or Kubernetes. It's fairly trivial to get Cloud Foundry deployed on top of Microsoft Azure and, once deployed, it's trivial to deploy Spring Boot applications there. It's often as simple as `cf push -p my.jar`. You'll need  the Cloud Foundry CLI, [of course](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
 

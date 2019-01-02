@@ -8,8 +8,8 @@ import java.time.Instant;
 @RestController
 class GreetingsRestController {
 
-	@GetMapping("/hi")
-	String hello() {
-		return "Hello " + Instant.now().toString();
-	}
+		@GetMapping("/hi")
+		String hello() {
+				return "Hello " + Instant.now().toString();
+		}
 }
