@@ -658,7 +658,7 @@ class ObjectStorageServiceDemo {
 
 The Microsoft Azure-specific bits are less than trivial. We obtain a reference to a container and then write to it and then log out the addressable URI of the resource. How _mundane_! And that's exactly what you want in a computing system primitive like a filesystem. It should be _mundane_. To be very honest, I was more pleased with getting to use Java 7's try-with-resources syntax for the `Autocloseable` `InputStream` reference!  
 
-# To Production!
+# Bootiful Azure: To Production!
 
 This last post in our series looking at Microsoft Azure is really a quick wrapup post that looks at things to keep in mind when deploying an application built with Spring Boot and Micosoft Azure to production.
 
