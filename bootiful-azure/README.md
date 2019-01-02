@@ -441,7 +441,7 @@ The AMQP model is illustrative because, basically, the native model for Azure Se
 
 ## Configuring Azure Service Bus on Microsoft Azure
 
-You'll need to provision a namespace, a topic and a subscription to connect to the topic. Here's an example script.
+You'll need to provision a servicebus namespace, a topic (top which we send messages and from which multiple consumers may listen) and a subscription (a consumer to either a topic or a queue) to connect to the topic. Here's an example script that does just that.
 
 ```shell
 #!/usr/bin/env bash
@@ -452,24 +452,29 @@ subscription=${destination}-subscription
 namespace=bootiful
 rg=$1
 
-az servicebus namespace create --resource-group $rg --name ${namespace}
-az servicebus topic create --resource-group $rg --namespace-name  ${namespace} --name ${topic}
-az servicebus topic subscription create --resource-group $rg --namespace-name  ${namespace} --topic-name ${topic} --name ${subscription}
+az servicebus namespace create --resource-group $rg \
+    --name ${namespace}
+
+az servicebus topic create --resource-group $rg \
+    --namespace-name ${namespace} \
+    --name ${topic}
+
+az servicebus topic subscription create --resource-group $rg  \
+    --namespace-name ${namespace} --topic-name ${topic} \
+    --name ${subscription}
 ```
 
-You'll need a connection string in order to connect your Spring application to the sericebus. Run this command and note the `primaryConnectionString` attribute value.
+You'll need a connection string in order to connect your Spring application to the servicebus. Run this command and note the `primaryConnectionString` attribute value for later.
 
 ```shell
 az servicebus namespace authorization-rule keys list --resource-group bootiful --namespace-name bootiful --name RootManageSharedAccessKey
 ```
 
-
-
 ## Introducing Azure Service Bus into your Spring Application
 
 Add the following dependency to your build: `com.microsoft.azure` : `azure-servicebus-spring-boot-starter`.
 
-We'll write two components: one a producer and the other a consumer. Naturally, in  a real application these things would naturally live in separate applications and separate processes since messaging serves to support the integration of applications. We'll look at the consumer first.  The consumer needs to register a subscriber _before_ something else has produced the message, so we'll make these beans _ordered_ - the Spring container will order their initialization one before the other based on the `Ordered` value we give it.
+We'll write two components: one a producer and the other a consumer. In a _real_ application these things would naturally live in separate applications and separate processes. Messaging serves to support the integration of disparate applications, after all. We'll look at the consumer first. The consumer needs to register a subscriber _before_ something else has produced the message, so we'll make these beans _ordered_ - the Spring container will order their initialization one before the other based on the `Ordered` value we give it.
 
 ```java
 package com.example.bootifulazure;
@@ -485,7 +490,6 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
-
 
 @Log4j2
 @Component
@@ -525,7 +529,7 @@ class ServiceBusConsumer implements Ordered {
 
 When a message arrives, we log its `body` and `messageId` .
 
-Now, let's look at  the producer.
+Now, let's look at the producer.
 
 ```java
 package com.example.bootifulazure;
@@ -562,21 +566,27 @@ class ServiceBusProducer implements Ordered {
 }
 ```
 
-Pretty straightforward right? We send a messasge, and we get a message. If you've ever done any work with messaging technoogies you might find the lack of mention of any sort of _destination_ - the topic or queue name - a bit puzzling. Remember that this all lives in the properties (such as those in your `application.properties` file) and is used when auto-configuring the `ITopicClient` and `ISubscriptionClient`. If you want to send messages or consume messages from multiple destinations, simply define the relevant beans yourself and make sure to _not_ specify `azure.service-bus.connection-string` in your application's properties, otherwise the default Spring Boot autoconfiguration will kick in and try to create these beans for you.
+Pretty straightforward right? The meat of the classes are  in the `consume()` and `produce()` methods.  The consumer runs first, then the producer. If you've ever done any work with messaging technoogies you might find the lack of a mention of any sort of _destination_ - the topic or queue   - a bit puzzling. That configuration all lives in the properties  (such as those in your `application.properties` file) and are used when auto-configuring the `ITopicClient` and `ISubscriptionClient`. If you want to send messages or consume messages from multiple destinations, simply define the relevant beans yourself and make sure to _not_ specify `azure.service-bus.connection-string` in your application's properties, otherwise the default Spring Boot auto-configuration will kick in and try to create these beans for you.
 
 # Bootiful Azure: Object Storage Service
 
-Now let's turn to something a bit more... mundane. Something that you, ideally, won't even think about all that often. Applications often have storage requirements: they may need to store uploaded user content (binary data like pictures or documents), generated artifacts like PDF fils, videos, music, etc. They might want to store logs. It's not hard to think of things an application might want to durably store.  
+Now let's turn to something a bit more... mundane. Something that you, ideally, won't even think about all that often. Applications often have storage requirements: they may need to store uploaded user content (binary data like pictures or documents), generated artifacts like PDF files, videos, music, etc. They might want to store logs. It's not hard to think of things an application might want to durably store.  
 
-These applications could use a filesystem, such as that on the local machine or a network attached filesystem like [NFS (network file system)](https://en.wikipedia.org/wiki/Network_File_System). I'll use NFS to generically refer to any network attached file system like Samba, NFS itself, or legacy options like DAC, FAL, etc. NFS options provide a filesystem-like interface to files, often in a hierarchical format. I say "like" because not all filesystems are the same. Some support more nuanced permissions models than others. Some support encheoding and replication of metatadata attached to files and directories in the tree. Support support different speed guarantees for different operations; some filesystems might optimize for reads versus writes. Some might optimize for directory traversals. The client's perspective of a file read or write is different depending on the client used. Is a write consistent on all replication nodes immediately? Finally, what if the client doesn't speak POSIX? What if it can only speak HTTP? Or if it wants to speak Bittorrent for more efficient consolidation of downloads through peer-to-peer networks?
+These applications _could_ use a filesystem, such as that on the local machine or a network attached filesystem like [NFS (network file system)](https://en.wikipedia.org/wiki/Network_File_System). I'll use NFS to generically refer to any network attached file system like Samba, NFS (those mounted with the NFS protocol) itself, or legacy options like DAC, FAL, etc. NFS options provide a filesystem-like interface to files, often in a hierarchical format. NFS options are interesting because they're like fileystems with which we're all familiar, and everybody knows how to work with filesystems, right? Surely, everything looks like the hierarchy expressed in Windows Explorer? Or macOS Finder? Except, they look nothing like each other...
 
-For these reasons, and more, Amazon Web Services introduced S3, the Simple Cloud Storage Service (get it? "S" times 3? "S3"?) which has since been something of a prevailing standard that all other cloud vendors need to support. For Microsoft Azure, the Object Storage Service (OSS) is the thing that provides an S3-like experience. You can use its API directly, as we will here, but it's [also possible to use the S3Proxy to proxy writes to OSS](https://www.microsoft.com/developerblog/2016/05/22/access-azure-blob-storage-from-your-apps-using-s3-api/) using an AWS S3 client, of which there are countless! Microsoft Azure isn't playing catchup though. Furthest thing from it! They even offer a standalone browser called the Microsoft Azure Storage Explorer which runs, yep, on Linux, Macintosh and Windows. That standalone browser lets you interrogate OSS stores _as well as_ CosmosDB data. How's that for convenient? You can of course using the `az` CLI or the API itself. We're going to use the Java API and abstraction in terms of Spring.
+Come to think of it, I had to say "like" when I said that NFS options are like filesystems. Some support more nuanced permissions models than others. Some support encoding and replication of metatadata attached to files and directories in the tree. Support support different speed guarantees for different operations; some filesystems may optimize for reads versus writes. Some might optimize for directory traversals. The client's perspective of a file read or write is different depending on the client used. (Is a write consistent on all replication nodes immediately?) 
+
+Even if we assumed all the filesystems to which we wanted to write were POSIX-friendly - you could use `int open(const char *path, int flags)` or `java.io.File` - this may not be the case for our clients. What if the client doesn't "speak" filesystem, and would prefer to manipulate the data in some other way? What if the client can only speak HTTP? Or if it wanted to speak Bittorrent for more efficient consolidation of downloads through peer-to-peer networks? 
+
+For these reasons, and more, Amazon Web Services introduced S3, the Simple Cloud Storage Service (get it? "S" times 3? "S3"?) which has since been something of a prevailing standard that all other cloud vendors need to support. For Microsoft Azure, the Object Storage Service (OSS) is the thing that provides an S3-like experience. It is not a POSIX filesystem. You can use its API directly, as we will here, but it's [also possible to use the S3Proxy to proxy writes to OSS](https://www.microsoft.com/developerblog/2016/05/22/access-azure-blob-storage-from-your-apps-using-s3-api/) using an AWS S3 client, of which there are countless! Azure's Object Storage Service truly is _boring_ which is exactly what you want when dealing with something so fundamental as persistant volumes of file-like data. It even offers a standalone browser called [the Microsoft Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) which runs (yep!) on Linux, Macintosh and Windows. That standalone browser lets you interrogate OSS stores _as well as_ CosmosDB data. How's that for convenient? You can of course use the `az` CLI or the API itself. We're going to use the Spring integration for the Java API. 
 
 
 ## Configuring Azure Object Storage Service
 
 * you need to create a bucket and upload a file called `cat.jpg`
 * you need to get the configuration values for `application.properties`
+
+
 
 ## Introducing Azure Object Storage Service into your Spring Application  
 
