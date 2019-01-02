@@ -6,3 +6,4 @@ NAME=bootiful
 ./create-sql-server.sh $NAME
 ./create-cosmosdb.sh $NAME
 ./create-servicebus.sh $NAME
+./create-oss.sh $NAME

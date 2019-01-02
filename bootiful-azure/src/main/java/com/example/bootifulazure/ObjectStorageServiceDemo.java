@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-//@Component
+@Component
 @Log4j2
 class ObjectStorageServiceDemo {
 

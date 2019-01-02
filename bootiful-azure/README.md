@@ -580,19 +580,33 @@ Even if we assumed all the filesystems to which we wanted to write were POSIX-fr
 
 For these reasons, and more, Amazon Web Services introduced S3, the Simple Cloud Storage Service (get it? "S" times 3? "S3"?) which has since been something of a prevailing standard that all other cloud vendors need to support. For Microsoft Azure, the Object Storage Service (OSS) is the thing that provides an S3-like experience. It is not a POSIX filesystem. You can use its API directly, as we will here, but it's [also possible to use the S3Proxy to proxy writes to OSS](https://www.microsoft.com/developerblog/2016/05/22/access-azure-blob-storage-from-your-apps-using-s3-api/) using an AWS S3 client, of which there are countless! Azure's Object Storage Service truly is _boring_ which is exactly what you want when dealing with something so fundamental as persistant volumes of file-like data. It even offers a standalone browser called [the Microsoft Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) which runs (yep!) on Linux, Macintosh and Windows. That standalone browser lets you interrogate OSS stores _as well as_ CosmosDB data. How's that for convenient? You can of course use the `az` CLI or the API itself. We're going to use the Spring integration for the Java API. 
 
-
 ## Configuring Azure Object Storage Service
 
-* you need to create a bucket and upload a file called `cat.jpg`
-* you need to get the configuration values for `application.properties`
+You've got to create an Azure Object Storage Service account (`bootiful`) assigned to the existing resource group `bootiful`. Then, create a storage container (`files`) assigned to the just-created storage account. Here's a sample script.
 
+```shell
+#!/usr/bin/env bash
 
+rg=$1
+accountname=bootiful
+
+az storage account create --name ${accountname} --resource-group ${rg}
+az storage container create -n files --account-name ${accountname}
+```
+
+Use the following command to ascertain the connection string required to connect to the application.
+
+```shell
+az storage account show-connection-string --resource-group bootiful --name bootiful
+```
+
+Note the connection string for later.
 
 ## Introducing Azure Object Storage Service into your Spring Application  
 
 Add `com.microsoft.azure`: `azure-storage-spring-boot-starter` to your application's build file. Make sure you've specified the OSS connection string for the `azure.storage.connection-string` property.
 
-We're going to read the bytes for an image of a cat in our application's `src/main/resources` directory and then write those bytes to the Object Storage Service as a "block blog". There are other interfaces through which you can talk to OSS, but for our purposes it's very natural to think about it as an ensemble of "containers" (logical groupings of things, almost like a directory)  and "blobs." A blob is a file, basically, with a name and metadata associated with it. So, all that the following example does is store the bytes for a cat into a container in Microsoft Azure called `files` under a random name prefixed with `cat-` and suffixed with `.jpg`. That's it!
+We'll read the bytes for an image of a cat in our application's `src/main/resources` directory and then write those bytes to the Object Storage Service as a "block blog". There are other interfaces through which you can talk to OSS, but for our purposes it's very natural to think about it as an ensemble of "containers" (logical groupings of things, almost like a directory or a bucket in S3 parlance) and "blobs." A blob is a file, basically, with a name and metadata associated with it. All that the following example does is store the bytes for a photo of a cat into a container called `files` under a random name prefixed with `cat-` and suffixed with `.jpg`. 
 
 ```java
 package com.example.bootifulazure;
@@ -642,8 +656,7 @@ class ObjectStorageServiceDemo {
 }
 ```
 
-The Microsoft Azure-specific bits are less than trivial. We obtain a reference to a container and then write to it and then log out the addressable URI of the resource. It is, if nothing else, _mundane_! And that's exactly what you want in a computing system primitive like a filesystem. It should be _mundane_. To be very honest, I was more pleased with getting to use Java 7's try-with-resources syntax for the `Autocloseable` `InputStream` reference!  
-
+The Microsoft Azure-specific bits are less than trivial. We obtain a reference to a container and then write to it and then log out the addressable URI of the resource. How _mundane_! And that's exactly what you want in a computing system primitive like a filesystem. It should be _mundane_. To be very honest, I was more pleased with getting to use Java 7's try-with-resources syntax for the `Autocloseable` `InputStream` reference!  
 
 # To Production!
 
@@ -655,7 +668,7 @@ We've developed the application with ease and aplomb from the comfort of our loc
 
 ## Microsoft Active Directory
 
-In my 20+ years of helping organizations build software I've seen nary a handful that _weren't_ using Microsoft Active Directory_ even if only from the LDAP interface. I hope Google gains more traction but let's be very clear: Active Directory is _the_ prevailing standard in enterprise IT. It is a way of life, even if you and I probably don't have to worry about it all that often in our idealized world of application development. And for good reason! It integrates the entire Windows desktop experience for the business professional. It's the beating heart of the Office365 story and it's the way organization organizes and self structures itself. Want to know if you got that promotion? Check Active Directory! Want to know where someone is seated? Check Active Directory! Want to force password resets? Maintain enterprise-wide audit logs? Fire someone? Check Active Directory! You may think your organizations runs Active Directory but lets be clear: it runs your organization.
+In my 20+ years of helping organizations build software I've seen nary a handful that _weren't_ using Microsoft Active Directory_ even if only from the LDAP interface. I hope Google gains more traction but let's be very clear: Active Directory is _the_ prevailing standard in enterprise IT. It is a way of life, even if you and I probably don't have to worry about it all that often in our idealized world of application development. And for good reason! It integrates the entire Windows desktop experience for the business professional. It's the beating heart of the Office365 story and it's the way organization organizes and self structures itself. Want to know if you got that promotion? Check Active Directory! Want to know where someone is seated? Check Active Directory! Want to force password resets? Maintain enterprise-wide audit logs? _Fire someone_? Check Active Directory! You may think your organizations runs Active Directory but lets be clear: it runs your organization.
 
 Active Directory is a directoy server. It provides a tree of users, organizations and more. It acts as  identity manager for technologies like Microsoft CRM, Microsoft SQL Server, Microsoft Office and even Microsoft Windows itself. You can describe users, their rights and roles, and so much more in Active Directory. Which brings us back around. Microsoft Azure runs Active Directory for you! You can import and configure all the relevant information for your Microsoft Active Directory install right from the platform. [There's even a Spring Boot starter to connect Microsoft Azure to your OAuth-delegating Spring Boot- and Spring Security-powered applications](https://azure.microsoft.com/en-us/blog/spring-security-azure-ad/). Could you deploy and manage something like Microsoft SQL Server or Microsoft Active Directory yourself? Sure. But, _should you_?
 
